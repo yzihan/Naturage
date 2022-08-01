@@ -49,24 +49,3 @@ function App() {
 
 export default App;
 
-// function App() {
-//     const [imgSrc, setImgSrc] = useState("");
-//     const handleCameraImage = (e) => {
-//         const file = (e.target.files)[0];
-//         const reader = new FileReader();
-//         reader.onloadend = () => {
-//             setImgSrc(reader.result);
-//         }
-//         if(file) {
-//             reader.readAsDataURL(file);
-//         } else {
-//             setImgSrc("");
-//         }
-//     }
-//     return (
-//         <div className="App">
-//             <input type='file' accept='image/*' capture='camera' onChange={handleCameraImage}/>
-//             <img src={imgSrc} width="100" alt="testing"/>
-//         </div>
-//     );
-// }
