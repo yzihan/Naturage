@@ -1,0 +1,73 @@
+.PanelContainer {
+    width: 100%;
+    height: 100%;
+    caret-color: transparent;
+}
+
+.ListContainer {
+    width: 100%;
+    height: 85%;
+    overflow-y: scroll;
+}
+
+.ItemContainer {
+    width: 100%;
+    height: 32.33%;
+}
+
+.ItemSplit {
+    width: 100%;
+    height: 20%;
+}
+
+.Item {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.ItemImage {
+    width: 69%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    /* box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.25); */
+}
+
+.ItemTitle {
+    width: 69%;
+    height: 25%;
+    background: linear-gradient(to right, #C5F6F6, #6FB5C2);
+    position: absolute;
+    bottom: 0px;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.TitleText {
+    font-size: 28px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 1);
+}
+
+.AddButtonContainer {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.AddButton {
+    width: 69%;
+    height: 45%;
+    background-color: #D5E9E9;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
