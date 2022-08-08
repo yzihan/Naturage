@@ -28,7 +28,7 @@ export default function MaterialPanel ({
     )
     const currentTexture = useSelector(currentInfo);
 
-    console.log('wyh-test-01', listData, currentTexture);
+    // console.log('wyh-test-01', listData, currentTexture);
 
     const dispatch = useDispatch();
     const listItems = listData.map((data, index) => {
