@@ -37,11 +37,30 @@ export default function MaterialPanel ({
             case 0:
                 return <div className="ItemContainer" key={`item-${index}`}>
                     <div className="ItemSplit"/>
-                    <div className="Item" onClick={() => dispatch(selectCurrentTexture({
-                        type: materialType,
-                        name: data.name,
-                        url: data.imageURL
-                    }))}>
+                    <div className="Item" onClick={() => {
+                            dispatch(
+                                selectCurrentTexture({
+                                    type: materialType,
+                                    name: data.name,
+                                    url: data.imageURL,
+                                })
+                            )
+ 
+                            // const img = new Image();
+                            // img.crossOrigin = '';
+                            // img.src = currentTexture.url + '?' + new Date().getTime();  // an amazing solution for cors
+                            // img.onload = () => {
+                            //     console.log('wyh-test-click-enter-02') // 阻塞了
+                            //     dispatch(
+                            //         selectCurrentTexture({
+                            //             type: materialType,
+                            //             name: data.name,
+                            //             url: data.imageURL,
+                            //             data: img
+                            //         })
+                            //     )   
+                            // }
+                        }}>
                         <img className="ItemImage" 
                             src={data.imageURL} 
                             alt={`item-${index}`} 

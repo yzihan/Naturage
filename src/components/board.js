@@ -10,7 +10,9 @@ import deleteSvg from "../svg/delete.svg";
 import pencilSvg from "../svg/pencil.svg";
 import eraserSvg from "../svg/eraser.svg";
 import { createSelector } from "reselect";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { dataURLtoBlob } from "./utils";
+import { selectCurrentTexture } from "../store/GlobalStore";
 
 export default function Board ({
     circleRadius,
@@ -36,9 +38,6 @@ export default function Board ({
         ]);
     }, [canvasRef])
 
-    // console.log('wyh-test-01', canvasSize, canvasOffset);
-    // console.log('wyh-test-01', Math.random(0, 1).toFixed(3));
-
     // canvas
     const [isDraw, setIsDraw] = useState(false);
 
@@ -61,13 +60,22 @@ export default function Board ({
     const [moveDistance, setMoveDistance] = useState([0, 0, 0, 0]); // move vector
     const [rangeRects, setRangeRects] = useState([]); // [[], []]
     const [isTranslate, setIsTranslate] = useState(false);
+    const [isRotate, setIsRotate] = useState(false);
     const [isScale, setIsScale] = useState(false);
     const [scaleRatio, setScaleRatio] = useState([1, 1]);
     const [rotatePoints, setRotatePoints] = useState([0, 0, 0, 0]);
     const [selectedShape, setSelectedShape] = useState(-1);
     const [savedCanvas, setSavedCanvas] = useState(null);
 
-    // console.log('wyh-test-05', selectedShape);
+    // current-texture
+    const currentInfo = createSelector(
+        state => state.global,
+        global => global.currentTexture,
+    )
+    const currentTexture = useSelector(currentInfo);
+    const [shapeTextureInfo, setShapeTextureInfo] = useState([]);
+
+    // console.log('wyh-test-01', shapeTextureInfo);
 
     const handleOnTouchStart = (e) => {
         if(selectedD !== -1 && selectedD !== -3) {
@@ -104,6 +112,11 @@ export default function Board ({
                     newIndex = Math.round(Math.random(0, 1) * 255);
                 }
                 shapeIndex.push(newIndex);
+
+                shapeTextureInfo.push({
+                    type: -1,
+                    name: ''
+                });
             }
         } else if (selectedD === -1) {
             const indexCanvas = document.getElementById('index-canvas');
@@ -117,17 +130,16 @@ export default function Board ({
                 1,
             ).data[0];
 
-            // console.log('wyh-test-04', targetR, shapeIndex);
             const selectResult = shapeIndex.indexOf(targetR);
-            if(selectResult !== -1) {
+
+            if(selectedShape !== -1 && selectResult !== -1) {
+                if(selectedShape !== selectResult) setSelectedShape(selectResult);
                 moveDistance[0] = currentX;
                 moveDistance[1] = currentY;
                 moveDistance[2] = moveDistance[0];
                 moveDistance[3] = moveDistance[1];
                 setIsTranslate(true);
-            }
-
-            if(selectedShape !== -1) {
+            } else if (selectedShape !== -1 && selectResult === -1) {
                 const rectPoints = rangeRects[selectedShape];
                 const distX = currentX - (rectPoints[0] + rectPoints[2]);
                 const distY = currentY - rectPoints[1]; 
@@ -135,18 +147,16 @@ export default function Board ({
                 if(dist < 20) {
                     setIsScale(true);
                 } else {
-                    if(selectResult !== -1) {
-                        setSelectedShape(selectResult);
-                    } else {
-                        // rotate
-                        rotatePoints[0] = currentX;
-                        rotatePoints[1] = currentY;
-                        rotatePoints[2] = currentX;
-                        rotatePoints[3] = currentY;
-                    }
+                    rotatePoints[0] = currentX;
+                    rotatePoints[1] = currentY;
+                    rotatePoints[2] = currentX;
+                    rotatePoints[3] = currentY;
+                    setIsRotate(true);
                 }
-            } else {
+            } else if (selectedShape === -1 && selectResult !== -1) {
                 setSelectedShape(selectResult);
+            } else {
+
             }
         }
     }
@@ -188,16 +198,18 @@ export default function Board ({
                     scaleRatio[0] = (currentX - rectPoints[0]) / rectPoints[2];
                     scaleRatio[1] = (rectPoints[1] + rectPoints[3] - currentY) / rectPoints[3];
                     setScaleRatio(JSON.parse(JSON.stringify(scaleRatio)));
-                } else {
-                    if(isTranslate) {
-                        moveDistance[2] = currentX;
-                        moveDistance[3] = currentY;
-                        setMoveDistance(JSON.parse(JSON.stringify(moveDistance)));
-                    } else {
-                        rotatePoints[2] = currentX;
-                        rotatePoints[3] = currentY;
-                        setRotatePoints(JSON.parse(JSON.stringify(rotatePoints)));
-                    }
+                }
+
+                if(isTranslate) {
+                    moveDistance[2] = currentX;
+                    moveDistance[3] = currentY;
+                    setMoveDistance(JSON.parse(JSON.stringify(moveDistance)));
+                }
+                
+                if(isRotate) {
+                    rotatePoints[2] = currentX;
+                    rotatePoints[3] = currentY;
+                    setRotatePoints(JSON.parse(JSON.stringify(rotatePoints)));
                 }
             }
         }
@@ -265,8 +277,10 @@ export default function Board ({
                     setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
                     setIsScale(false);
                     setScaleRatio([1, 1]);
-                } else {
-                    if(isTranslate) {
+                }
+
+                if(isTranslate) {
+                    if(moveDistance[0] !== moveDistance[2] || moveDistance[1] !== moveDistance[3]) {
                         const deltaX = moveDistance[2] - moveDistance[0];
                         const deltaY = moveDistance[3] - moveDistance[1];
         
@@ -280,56 +294,109 @@ export default function Board ({
                         }
                         shapePoints[selectedShape] = points;
                         setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
-                        setMoveDistance([0, 0, 0, 0]);
-                        setIsTranslate(false);
+                    } 
+                    setMoveDistance([0, 0, 0, 0]);
+                    setIsTranslate(false);
+                } 
+                
+                if(isRotate) {
+                    if(rotatePoints[0] === rotatePoints[2] && rotatePoints[1] === rotatePoints[3]) {
+                        setSelectedShape(-1);
+                        setSelectedM(-1);
+                        dispatch(selectCurrentTexture({
+                            type: -1,
+                            name: '',
+                            url: '',
+                        }));
                     } else {
-                        if(rotatePoints[0] === rotatePoints[2] && rotatePoints[1] === rotatePoints[3]) {
-                            setSelectedShape(-1);
-                        } else {
-                            const rectPoints = rangeRects[selectedShape];
+                        const rectPoints = rangeRects[selectedShape];
 
-                            // rotate shape points
-                            const centerX = rectPoints[0] + 0.5 * rectPoints[2];
-                            const centerY = rectPoints[1] + 0.5 * rectPoints[3];
-                            const vec1 = [rotatePoints[0] - centerX, rotatePoints[1] - centerY];
-                            const vec2 = [rotatePoints[2] - centerX, rotatePoints[3] - centerY];
-                            const inmU = vec1[0] * vec2[0] + vec1[1] * vec2[1];
-                            const cosV = inmU / (Math.sqrt(vec1[0] * vec1[0] + vec1[1] * vec1[1]) * Math.sqrt(vec2[0] * vec2[0] + vec2[1] * vec2[1]));
-                            let rAngle = Math.acos(cosV);
-                            if(vec1[0] * vec2[1] - vec1[1] * vec2[0] < 0) rAngle = -rAngle;
-                            const points = shapePoints[selectedShape];
-                            for(let n = 0; n < points.length; n++) {
-                                const lenX = points[n][0] - centerX;
-                                const lenY = points[n][1] - centerY;
-                                const len = Math.sqrt(lenX * lenX + lenY * lenY);
-                                const pAngle = Math.atan2(lenY, lenX) + rAngle;
-                                points[n][0] = centerX + len * Math.cos(pAngle);
-                                points[n][1] = centerY + len * Math.sin(pAngle);
-                            }
-                            shapePoints[selectedShape] = points;
-                            setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
-
-                            // recompute shape rect
-                            let leftTop = [points[0][0], points[0][1]];
-                            let rightBottom = [points[0][0], points[0][1]];
-                            points.forEach(p => {
-                                if(p[0] < leftTop[0]) leftTop[0] = p[0];
-                                if(p[0] > rightBottom[0]) rightBottom[0] = p[0];
-                                if(p[1] < leftTop[1]) leftTop[1] = p[1];
-                                if(p[1] > rightBottom[1]) rightBottom[1] = p[1];
-                            });
-                            rangeRects[selectedShape][0] = leftTop[0];
-                            rangeRects[selectedShape][1] = leftTop[1];
-                            rangeRects[selectedShape][2] = rightBottom[0] - leftTop[0];
-                            rangeRects[selectedShape][3] = rightBottom[1] - leftTop[1];
-
-                            setRotatePoints([0, 0, 0, 0]);
+                        // rotate shape points
+                        const centerX = rectPoints[0] + 0.5 * rectPoints[2];
+                        const centerY = rectPoints[1] + 0.5 * rectPoints[3];
+                        const vec1 = [rotatePoints[0] - centerX, rotatePoints[1] - centerY];
+                        const vec2 = [rotatePoints[2] - centerX, rotatePoints[3] - centerY];
+                        const inmU = vec1[0] * vec2[0] + vec1[1] * vec2[1];
+                        const cosV = inmU / (Math.sqrt(vec1[0] * vec1[0] + vec1[1] * vec1[1]) * Math.sqrt(vec2[0] * vec2[0] + vec2[1] * vec2[1]));
+                        let rAngle = Math.acos(cosV);
+                        if(vec1[0] * vec2[1] - vec1[1] * vec2[0] < 0) rAngle = -rAngle;
+                        const points = shapePoints[selectedShape];
+                        for(let n = 0; n < points.length; n++) {
+                            const lenX = points[n][0] - centerX;
+                            const lenY = points[n][1] - centerY;
+                            const len = Math.sqrt(lenX * lenX + lenY * lenY);
+                            const pAngle = Math.atan2(lenY, lenX) + rAngle;
+                            points[n][0] = centerX + len * Math.cos(pAngle);
+                            points[n][1] = centerY + len * Math.sin(pAngle);
                         }
+                        shapePoints[selectedShape] = points;
+                        setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
+
+                        // recompute shape rect
+                        let leftTop = [points[0][0], points[0][1]];
+                        let rightBottom = [points[0][0], points[0][1]];
+                        points.forEach(p => {
+                            if(p[0] < leftTop[0]) leftTop[0] = p[0];
+                            if(p[0] > rightBottom[0]) rightBottom[0] = p[0];
+                            if(p[1] < leftTop[1]) leftTop[1] = p[1];
+                            if(p[1] > rightBottom[1]) rightBottom[1] = p[1];
+                        });
+                        rangeRects[selectedShape][0] = leftTop[0];
+                        rangeRects[selectedShape][1] = leftTop[1];
+                        rangeRects[selectedShape][2] = rightBottom[0] - leftTop[0];
+                        rangeRects[selectedShape][3] = rightBottom[1] - leftTop[1];
+
+                        setRotatePoints([0, 0, 0, 0]);
                     }
+                    setIsRotate(false);
                 }
             }
         }
     }
+
+    // ref is used to get current info
+    const [imageTexture, setImageTexture] = useState([]);
+    const texturesRef = useRef({
+        textureArr: []
+    })
+
+    useEffect(() => {
+        if(selectedShape !== -1) {
+            if(currentTexture.type === 0) {
+                const index = imageTexture.findIndex(imgT => imgT.name === currentTexture.name);
+                // console.log('wyh-test', index, imageTexture);
+                if(index === -1) {
+                    const img = new Image();
+                    img.crossOrigin = '';
+                    img.src = currentTexture.url;  // an amazing solution for cors  + '?' + new Date().getTime()
+                    img.onload = () => {
+                        const initCanvas = document.createElement('canvas');
+                        initCanvas.width = img.width;
+                        initCanvas.height = img.height;
+                        const initImage = initCanvas.getContext('2d');
+                        initImage.drawImage(img, 0, 0);
+
+                        texturesRef.current.textureArr.push(initCanvas);  // 目前会push两次
+
+                        imageTexture.push({
+                            name: currentTexture.name,
+                        });
+                        setImageTexture(JSON.parse(JSON.stringify(imageTexture)));
+                    }
+                }
+
+                if(currentTexture.name !==  shapeTextureInfo[selectedShape].name) {
+                    shapeTextureInfo[selectedShape] = {
+                        type: 0,
+                        name: currentTexture.name
+                    }
+                    setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
+                }
+            }
+        }
+    }, [selectedShape, currentTexture, shapeTextureInfo])
+
+    // console.log('wyh-test-imageTexture', imageTexture, texturesRef.current, shapeTextureInfo)
 
     // draw
     useEffect(() => {
@@ -348,9 +415,10 @@ export default function Board ({
                 canvasCont.lineWidth = selectedShape === i ? pencilStyle.size + 2 : pencilStyle.size;
                 canvasCont.beginPath();
                 let points;
+                const rectPoints = rangeRects[i];
                 if(selectedShape === i) {
                     points = JSON.parse(JSON.stringify(shapePoints[i]));
-                    const rectPoints = rangeRects[selectedShape];
+                    
                     if(isScale) {
                         // scale
                         const lbx = rectPoints[0];
@@ -378,7 +446,6 @@ export default function Board ({
                             const lenY = points[n][1] - centerY;
                             const len = Math.sqrt(lenX * lenX + lenY * lenY);
                             const pAngle = Math.atan2(lenY, lenX) + rAngle;
-                            if(n === 0) console.log('wyh-test-angle', rAngle, pAngle);
                             points[n][0] = centerX + len * Math.cos(pAngle);
                             points[n][1] = centerY + len * Math.sin(pAngle);
                         }
@@ -390,16 +457,71 @@ export default function Board ({
                 const deltaX = selectedShape === i ? moveDistance[2] - moveDistance[0] : 0;
                 const deltaY = selectedShape === i ? moveDistance[3] - moveDistance[1] : 0;
                 for(let k = 0; k < points.length; k++) {
-                    const x = points[k][0] + deltaX;
-                    const y = points[k][1] + deltaY;
+                    points[k][0] += deltaX;
+                    points[k][1] += deltaY;
                     if(k === 0) {
-                        canvasCont.moveTo(x, y);
+                        canvasCont.moveTo(points[k][0], points[k][1]);
                     } else {
-                        canvasCont.lineTo(x, y);
+                        canvasCont.lineTo(points[k][0], points[k][1]);
                     }
                 }
                 if(shapeHasDrawed[i]) canvasCont.closePath();
                 canvasCont.stroke();
+
+                // fill
+                if(shapeHasDrawed[i] && !isRotate && !isScale && !isTranslate) {
+                    const textureInfo = shapeTextureInfo[i];
+                    if(textureInfo.type === 0) {
+                        const index = imageTexture.findIndex(imgT => imgT.name === textureInfo.name);
+
+                        if(index !== -1) {
+                            const initCanvas = texturesRef.current.textureArr[index];
+                            const rangeW = rectPoints[2];
+                            const rangeH = rectPoints[3];
+            
+                            const wRatio = initCanvas.width / rangeW;
+                            const hRatio = initCanvas.height / rangeH;
+                            let adaptW, adaptH;
+            
+                            if(wRatio > 1 && hRatio > 1) {
+                                adaptW = rangeW;
+                                adaptH = rangeH;
+                            } else {     
+                                if(wRatio > hRatio) {
+                                    adaptW = initCanvas.height * (rangeW / rangeH);
+                                    adaptH = initCanvas.height;
+                                } else {
+                                    adaptW = initCanvas.width;
+                                    adaptH = initCanvas.width * (rangeH / rangeW);
+                                }
+                            }
+            
+                            const middleCanvas = document.createElement('canvas');
+                            middleCanvas.width =  rangeW;
+                            middleCanvas.height = rangeH;
+                            const middleImage = middleCanvas.getContext('2d');
+                            middleImage.drawImage(
+                                initCanvas, 
+                                (initCanvas.width - adaptW) / 2,
+                                (initCanvas.height - adaptH) / 2,
+                                adaptW,
+                                adaptH,
+                                0,
+                                0, 
+                                rangeW, 
+                                rangeH
+                            );
+            
+                            const pattern = canvasCont.createPattern(middleCanvas, 'no-repeat');
+
+                            canvasCont.fillStyle = pattern;
+                            canvasCont.save();
+                            canvasCont.translate(rectPoints[0], rectPoints[1]);
+                            canvasCont.fill();
+                            canvasCont.restore();
+                        }
+                    }
+                }
             }
 
             // draw max range rect
@@ -484,109 +606,9 @@ export default function Board ({
             }
 
         }
-    }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints])
+    }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, shapeTextureInfo, imageTexture])
 
-    // current-texture
-    const currentInfo = createSelector(
-        state => state.global,
-        global => global.currentTexture,
-    )
-    const currentTexture = useSelector(currentInfo);
-
-    // console.log('wyh-test-07', currentTexture);
-    const [shapeTextureInfo, setShapeTextureInfo] = useState([]);
-
-    // useEffect(() => {
-    //     if(selectedShape !== -1) {
-    //         const canvas = document.getElementById('painting-canvas');
-    //         const canvasCont = canvas.getContext('2d');
-    //         if(currentTexture.type === 0) {
-    //             const img = new Image();
-    //             img.crossOrigin = '';
-    //             img.src = currentTexture.url + '?' + new Date().getTime();  // an amazing solution for cors
-
-    //             img.onload = () => {
-    //                 const points = shapePoints[selectedShape];
-    //                 let leftTop = [points[0][0], points[0][1]];
-    //                 let rightBottom = [points[0][0], points[0][1]];
-    //                 points.forEach(p => {
-    //                     if(p[0] < leftTop[0]) leftTop[0] = p[0];
-    //                     if(p[0] > rightBottom[0]) rightBottom[0] = p[0];
-    //                     if(p[1] < leftTop[1]) leftTop[1] = p[1];
-    //                     if(p[1] > rightBottom[1]) rightBottom[1] = p[1];
-    //                 });
-
-    //                 const initCanvas = document.createElement('canvas');
-    //                 initCanvas.width = img.width;
-    //                 initCanvas.height = img.height;
-    //                 const initImage = initCanvas.getContext('2d');
-    //                 initImage.drawImage(img, 0, 0);
-
-    //                 const rangeW = rightBottom[0] - leftTop[0];
-    //                 const rangeH = rightBottom[1] - leftTop[1];
-
-    //                 const wRatio = img.width / rangeW;
-    //                 const hRatio = img.height / rangeH;
-    //                 let adaptW, adaptH;
-    //                 if(wRatio > hRatio) {
-    //                     adaptW = img.height * (rangeW / rangeH);
-    //                     adaptH = img.height;
-    //                 } else {
-    //                     adaptW = img.width;
-    //                     adaptH = img.width * (rangeH / rangeW);
-    //                 }
-                    
-    //                 const controlRatio = 1;
-    //                 // const middleCanvas = document.getElementById('test-canvas');
-    //                 const middleCanvas = document.createElement('canvas');
-    //                 middleCanvas.width = controlRatio * rangeW;
-    //                 middleCanvas.height = controlRatio * rangeH;
-    //                 const middleImage = middleCanvas.getContext('2d');
-    //                 middleImage.drawImage(
-    //                     initCanvas, 
-    //                     (img.width - adaptW) / 2,
-    //                     (img.height - adaptH) / 2,
-    //                     adaptW,
-    //                     adaptH,
-    //                     0,
-    //                     0, 
-    //                     controlRatio * rangeW, 
-    //                     controlRatio * rangeH
-    //                 );
-
-    //                 const pattern = canvasCont.createPattern(middleCanvas, 'no-repeat');
-
-    //                 canvasCont.putImageData(savedCanvas, 0, 0);
-
-    //                 canvasCont.beginPath();
-    //                 canvasCont.fillStyle = pattern;
-    //                 canvasCont.strokeStyle = 'rgba(0, 0, 0, 0)';
-    //                 canvasCont.lineWidth = pencilStyle.size;
-    //                 canvasCont.lineJoin = 'round';
-    //                 canvasCont.lineCap = 'round';
-    //                 canvasCont.moveTo(
-    //                     points[0][0],
-    //                     points[0][1],
-    //                 );
-        
-    //                 for(let i = 1; i < points.length; i++) {
-    //                     canvasCont.lineTo(points[i][0], points[i][1]);
-    //                 }
-    //                 canvasCont.closePath();
-    //                 canvasCont.stroke();
-    //                 canvasCont.save();
-    //                 canvasCont.translate(leftTop[0], leftTop[1]);
-    //                 canvasCont.fill();
-    //                 canvasCont.restore();
-
-    //                 // canvasCont.strokeStyle = 'rgba(0, 0, 0, 1)';
-    //                 // canvasCont.strokeRect(leftTop[0], leftTop[1], rangeW, rangeH);  // right
-                    
-    //                 setSavedCanvas(canvasCont.getImageData(0, 0, canvasSize[0], canvasSize[1]));
-    //             }
-    //         }
-    //     }
-    // }, [currentTexture, selectedShape, shapePoints, pencilStyle, canvasSize]);
+    const dispatch = useDispatch();
 
     return (
         <div className="Container" ref={canvasRef}>
@@ -611,8 +633,6 @@ export default function Board ({
                 onTouchEnd={handleOnTouchEnd}
             />
 
-            {/* <canvas id='test-canvas'/> */}
-
             {/* material-circle */}
             <div className="Material-circle"
             style={{
@@ -622,7 +642,19 @@ export default function Board ({
                 left: `-${0.88 * circleRadius}px`,
             }}>
                 <div className="Button-material"
-                    onClick={() => selecetedM === 0 ? setSelectedM(-1) : setSelectedM(0)}
+                    // onClick={() => selecetedM === 0 ? setSelectedM(-1) : setSelectedM(0)}
+                    onClick={() => {
+                        if(selecetedM === 0) {
+                            setSelectedM(-1);
+                            dispatch(selectCurrentTexture({
+                                type: -1,
+                                name: '',
+                                url: '',
+                            }))
+                        } else {
+                            setSelectedM(0);
+                        }
+                    }}
                     style={{
                         width: `${buttionRadius}px`,
                         height: `${buttionRadius}px`,
