@@ -11,8 +11,9 @@ import pencilSvg from "../svg/pencil.svg";
 import eraserSvg from "../svg/eraser.svg";
 import { createSelector } from "reselect";
 import { useDispatch, useSelector } from 'react-redux';
-import { dataURLtoBlob } from "./utils";
 import { selectCurrentTexture } from "../store/GlobalStore";
+import AdjustPanel from "./adjustPanel";
+import MaskCircle from "./maskCircle";
 
 export default function Board ({
     circleRadius,
@@ -37,6 +38,8 @@ export default function Board ({
             canvasRef.current?.offsetTop || 0
         ]);
     }, [canvasRef])
+
+    // console.log('wyh-test-01', circleRadius)
 
     // canvas
     const [isDraw, setIsDraw] = useState(false);
@@ -66,6 +69,9 @@ export default function Board ({
     const [rotatePoints, setRotatePoints] = useState([0, 0, 0, 0]);
     const [selectedShape, setSelectedShape] = useState(-1);
     const [savedCanvas, setSavedCanvas] = useState(null);
+
+    const [isAdjustTexture, setIsAdjustTexture] = useState(false);
+    const [adjustPoint, setAdjustPoint] = useState([0, 0]);
 
     // current-texture
     const currentInfo = createSelector(
@@ -99,7 +105,6 @@ export default function Board ({
                     e.changedTouches[0].clientY - canvasOffset[1],
                 ])
             } else if (selectedD === 2) {
-
                 shapePoints.push([[
                     e.changedTouches[0].clientX - canvasOffset[0],
                     e.changedTouches[0].clientY - canvasOffset[1],
@@ -115,7 +120,8 @@ export default function Board ({
 
                 shapeTextureInfo.push({
                     type: -1,
-                    name: ''
+                    name: '',
+                    rect: []
                 });
             }
         } else if (selectedD === -1) {
@@ -139,13 +145,17 @@ export default function Board ({
                 moveDistance[2] = moveDistance[0];
                 moveDistance[3] = moveDistance[1];
                 setIsTranslate(true);
+                setIsAdjustTexture(false);
             } else if (selectedShape !== -1 && selectResult === -1) {
+                // right top button for scale
                 const rectPoints = rangeRects[selectedShape];
                 const distX = currentX - (rectPoints[0] + rectPoints[2]);
                 const distY = currentY - rectPoints[1]; 
                 const dist = Math.sqrt(distX * distX + distY * distY);
+
                 if(dist < 20) {
                     setIsScale(true);
+                    setIsAdjustTexture(false);
                 } else {
                     rotatePoints[0] = currentX;
                     rotatePoints[1] = currentY;
@@ -258,8 +268,8 @@ export default function Board ({
             }
         } else if (selectedD === -1) {
             if(selectedShape !== -1) {
+                const rectPoints = rangeRects[selectedShape];
                 if(isScale) {
-                    const rectPoints = rangeRects[selectedShape];
                     const lbx = rectPoints[0];
                     const lby = rectPoints[1] + rectPoints[3];
                     const points = shapePoints[selectedShape];
@@ -301,13 +311,33 @@ export default function Board ({
                 
                 if(isRotate) {
                     if(rotatePoints[0] === rotatePoints[2] && rotatePoints[1] === rotatePoints[3]) {
-                        setSelectedShape(-1);
-                        setSelectedM(-1);
-                        dispatch(selectCurrentTexture({
-                            type: -1,
-                            name: '',
-                            url: '',
-                        }));
+                        // right left button for adjusting texture
+                        const currentX = e.changedTouches[0].clientX - canvasOffset[0];
+                        const currentY = e.changedTouches[0].clientY - canvasOffset[1];
+                        const t_disX = currentX - (rectPoints[0] + rectPoints[2]);
+                        const t_disy = currentY - (rectPoints[1] + rectPoints[3]);
+                        const t_dist = Math.sqrt(t_disX * t_disX + t_disy * t_disy);
+
+                        if(t_dist < 20) {
+                            if(!isAdjustTexture) {
+                                adjustPoint[0] = rectPoints[0] + rectPoints[2];
+                                adjustPoint[1] = rectPoints[1] + rectPoints[3] / 2;
+                                setIsAdjustTexture(true);
+                            } else {
+                                adjustPoint[0] = 0;
+                                adjustPoint[1] = 0;
+                                setIsAdjustTexture(false);
+                            }
+                        } else {
+                            setSelectedShape(-1);
+                            setSelectedM(-1);
+                            dispatch(selectCurrentTexture({
+                                type: -1,
+                                name: '',
+                                url: '',
+                            }));
+                            setIsAdjustTexture(false);
+                        }
                     } else {
                         const rectPoints = rangeRects[selectedShape];
 
@@ -360,6 +390,7 @@ export default function Board ({
         textureArr: []
     })
 
+    const initialCanvasWidth = 900;
     useEffect(() => {
         if(selectedShape !== -1) {
             if(currentTexture.type === 0) {
@@ -371,10 +402,10 @@ export default function Board ({
                     img.src = currentTexture.url;  // an amazing solution for cors  + '?' + new Date().getTime()
                     img.onload = () => {
                         const initCanvas = document.createElement('canvas');
-                        initCanvas.width = img.width;
-                        initCanvas.height = img.height;
+                        initCanvas.width = initialCanvasWidth;
+                        initCanvas.height = Math.round(initialCanvasWidth * 1024 / 1366);
                         const initImage = initCanvas.getContext('2d');
-                        initImage.drawImage(img, 0, 0);
+                        initImage.drawImage(img, 0, 0, img.width, img.height, 0, 0, initCanvas.width, initCanvas.height);
 
                         texturesRef.current.textureArr.push(initCanvas);  // 目前会push两次
 
@@ -388,7 +419,8 @@ export default function Board ({
                 if(currentTexture.name !==  shapeTextureInfo[selectedShape].name) {
                     shapeTextureInfo[selectedShape] = {
                         type: 0,
-                        name: currentTexture.name
+                        name: currentTexture.name,
+                        rect: []
                     }
                     setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
                 }
@@ -418,7 +450,7 @@ export default function Board ({
                 const rectPoints = rangeRects[i];
                 if(selectedShape === i) {
                     points = JSON.parse(JSON.stringify(shapePoints[i]));
-                    
+
                     if(isScale) {
                         // scale
                         const lbx = rectPoints[0];
@@ -478,22 +510,36 @@ export default function Board ({
                             const initCanvas = texturesRef.current.textureArr[index];
                             const rangeW = rectPoints[2];
                             const rangeH = rectPoints[3];
-            
-                            const wRatio = initCanvas.width / rangeW;
-                            const hRatio = initCanvas.height / rangeH;
-                            let adaptW, adaptH;
-            
-                            if(wRatio > 1 && hRatio > 1) {
-                                adaptW = rangeW;
-                                adaptH = rangeH;
-                            } else {     
-                                if(wRatio > hRatio) {
-                                    adaptW = initCanvas.height * (rangeW / rangeH);
-                                    adaptH = initCanvas.height;
-                                } else {
-                                    adaptW = initCanvas.width;
-                                    adaptH = initCanvas.width * (rangeH / rangeW);
+
+                            let r_ltx, r_lty, r_w, r_h;
+                            if(shapeTextureInfo[i].rect.length === 0) {
+                                const wRatio = initCanvas.width / rangeW;
+                                const hRatio = initCanvas.height / rangeH;
+                                let adaptW, adaptH;
+                
+                                if(wRatio > 1 && hRatio > 1) {
+                                    adaptW = rangeW;
+                                    adaptH = rangeH;
+                                } else {     
+                                    if(wRatio > hRatio) {
+                                        adaptW = initCanvas.height * (rangeW / rangeH);
+                                        adaptH = initCanvas.height;
+                                    } else {
+                                        adaptW = initCanvas.width;
+                                        adaptH = initCanvas.width * (rangeH / rangeW);
+                                    }
                                 }
+
+                                r_ltx = (initCanvas.width - adaptW) / 2;
+                                r_lty = (initCanvas.height - adaptH) / 2;
+                                r_w = adaptW;
+                                r_h = adaptH;
+                                shapeTextureInfo[i].rect = [r_ltx, r_lty, r_w, r_h];
+                            } else {
+                                r_ltx = shapeTextureInfo[i].rect[0];
+                                r_lty = shapeTextureInfo[i].rect[1];
+                                r_w = shapeTextureInfo[i].rect[2];
+                                r_h = shapeTextureInfo[i].rect[3];
                             }
             
                             const middleCanvas = document.createElement('canvas');
@@ -502,10 +548,14 @@ export default function Board ({
                             const middleImage = middleCanvas.getContext('2d');
                             middleImage.drawImage(
                                 initCanvas, 
-                                (initCanvas.width - adaptW) / 2,
-                                (initCanvas.height - adaptH) / 2,
-                                adaptW,
-                                adaptH,
+                                // (initCanvas.width - adaptW) / 2,
+                                // (initCanvas.height - adaptH) / 2,
+                                // adaptW,
+                                // adaptH,
+                                r_ltx, 
+                                r_lty, 
+                                r_w, 
+                                r_h,
                                 0,
                                 0, 
                                 rangeW, 
@@ -560,7 +610,7 @@ export default function Board ({
                 const rby = lty + sH;
 
                 // right bottom
-                canvasCont.strokeStyle = '#888';
+                canvasCont.strokeStyle = '#b6dadf';
                 canvasCont.beginPath();
                 canvasCont.moveTo(rbx, rby - usedRatio * sH);
                 canvasCont.lineTo(rbx, rby);
@@ -571,6 +621,7 @@ export default function Board ({
                 const lby = rby;
 
                 // left bottom
+                canvasCont.strokeStyle = '#888';
                 canvasCont.beginPath();
                 canvasCont.moveTo(lbx + usedRatio * sW, lby);
                 canvasCont.lineTo(lbx, lby);
@@ -609,6 +660,16 @@ export default function Board ({
     }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, shapeTextureInfo, imageTexture])
 
     const dispatch = useDispatch();
+    const adjustPanelWidth = 300;
+    const adjustPanelHeight = Math.round(adjustPanelWidth * 1024 / 1366);
+    const toTop = adjustPoint[1] - (adjustPanelHeight / 2);
+    const index = selectedShape !== -1 ? imageTexture.findIndex(imgT => imgT.name === shapeTextureInfo[selectedShape].name) : -1;
+
+    // console.log('wyh-test-isAdjustTexture', isAdjustTexture)
+    const handleTextureAdjust = (newRect) => {
+        shapeTextureInfo[selectedShape].rect = newRect;
+        setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
+    }
 
     return (
         <div className="Container" ref={canvasRef}>
@@ -633,6 +694,28 @@ export default function Board ({
                 onTouchEnd={handleOnTouchEnd}
             />
 
+            {
+                isAdjustTexture && <div style={{
+                    width: `${adjustPanelWidth}px`,
+                    height: `${adjustPanelHeight}px`,
+                    background: '#fff',
+                    position: 'absolute',
+                    left: `${adjustPoint[0] + 30}px`,
+                    top: `${toTop}px`,
+                    boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.25)',
+                    caretColor: 'transparent',
+                }}>
+                    <AdjustPanel 
+                        canvasSize={[adjustPanelWidth, adjustPanelHeight]}
+                        imgCanvas={index !== -1 ? texturesRef.current.textureArr[index] : null}
+                        rectPosition={shapeTextureInfo[selectedShape].rect}
+                        scaleRatio={adjustPanelWidth / initialCanvasWidth}
+                        imgLT={[adjustPoint[0] + 30, toTop + canvasOffset[1]]}
+                        changeTexture={handleTextureAdjust}
+                    />
+                </div>
+            }
+
             {/* material-circle */}
             <div className="Material-circle"
             style={{
@@ -642,7 +725,6 @@ export default function Board ({
                 left: `-${0.88 * circleRadius}px`,
             }}>
                 <div className="Button-material"
-                    // onClick={() => selecetedM === 0 ? setSelectedM(-1) : setSelectedM(0)}
                     onClick={() => {
                         if(selecetedM === 0) {
                             setSelectedM(-1);
@@ -796,6 +878,9 @@ export default function Board ({
                     />
                 </div>
             </div>
+
+            {/* mask circle */}
+            <MaskCircle circleRadius={circleRadius} canvasWidth={canvasSize[0]} canvasHeight={canvasSize[1]} />
         </div>
     )
 }

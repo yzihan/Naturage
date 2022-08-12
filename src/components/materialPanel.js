@@ -45,21 +45,6 @@ export default function MaterialPanel ({
                                     url: data.imageURL,
                                 })
                             )
- 
-                            // const img = new Image();
-                            // img.crossOrigin = '';
-                            // img.src = currentTexture.url + '?' + new Date().getTime();  // an amazing solution for cors
-                            // img.onload = () => {
-                            //     console.log('wyh-test-click-enter-02') // 阻塞了
-                            //     dispatch(
-                            //         selectCurrentTexture({
-                            //             type: materialType,
-                            //             name: data.name,
-                            //             url: data.imageURL,
-                            //             data: img
-                            //         })
-                            //     )   
-                            // }
                         }}>
                         <img className="ItemImage" 
                             src={data.imageURL} 
