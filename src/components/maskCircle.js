@@ -3,7 +3,7 @@ import clothSvg from '../svg/mask/cloth.svg';
 import cloudSvg from '../svg/mask/cloud.svg';
 import loveSvg from '../svg/mask/love.svg';
 import qqSvg from '../svg/mask/qq.svg';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 const maskSvgs = [
     {
@@ -28,8 +28,9 @@ export default function MaskCircle ({
     circleRadius,
     canvasWidth,
     canvasHeight,
+    offsetHeight,
+    dragMaskIntoCanvas,
 }) {
-
     // compute angle
     const incircleRatio = 0.75;
     const distRatio = (1 - incircleRatio) / 2;
@@ -46,7 +47,6 @@ export default function MaskCircle ({
     const sliderPositionCount = maskSvgs.length > showCount ? (maskSvgs.length - showCount) + 1 : 1;
     const sliderPositionAngle = (Math.PI / 2 - (angle11 + angle22)) / sliderPositionCount;
 
-
     const [currentSlider, setCurrentSlider] = useState(0);
 
     // mask images
@@ -54,8 +54,45 @@ export default function MaskCircle ({
     const scaleMaxSize = 0.8 * maxSize;
     const svgMaxSize = 0.7 * maxSize;
     const centerR = (incircleRatio / 2 + (0.5 - incircleRatio / 2) / 2) * circleRadius;
+
+    const [isMaskDrag, setIsMaskDrag] = useState(false);
+    const [maskMoveP, setMaskMoveP] = useState([0, 0]);
+    const [selectedMask, setSelectedMask] = useState('');
+
+    const handleSvgDragStart = (svg, e) => {
+        // console.log('wyh-test-01', svg, e.changedTouches[0].clientX);
+        setIsMaskDrag(true);
+        setSelectedMask(svg);
+        setMaskMoveP([
+            e.changedTouches[0].clientX,
+            e.changedTouches[0].clientY
+        ])
+    }
+
+    const handleSvgDragMove = (e) => {
+        if(isMaskDrag) {
+            setMaskMoveP([
+                e.changedTouches[0].clientX,
+                e.changedTouches[0].clientY
+            ])
+        }
+    }
     
-  
+    const handleSvgDragEnd = (e) => {
+        if(isMaskDrag) {
+            dragMaskIntoCanvas(
+                [
+                    e.changedTouches[0].clientX,
+                    e.changedTouches[0].clientY - offsetHeight
+                ],
+                selectedMask
+            )
+            setIsMaskDrag(false);
+            setMaskMoveP([0, 0])
+            setSelectedMask('');
+        }
+    }
+
     const maskItems = [];
     for(let i = currentSlider; i < currentSlider + showCount; i++) {
         const angle = angle2 + (i + 0.5 - currentSlider) * itemAngle;
@@ -64,7 +101,11 @@ export default function MaskCircle ({
         const centerToLeft = 0.5 * circleRadius - centerR * cosAngle;
         const centerToTop = 0.5 * circleRadius - centerR * sinAngle;
         maskItems.push(
-            <div key={`mask-${i}`}>
+            <div key={`mask-${i}`}
+                onTouchStart={(e) => handleSvgDragStart(maskSvgs[i].svg, e)}
+                onTouchMove={handleSvgDragMove}
+                onTouchEnd={handleSvgDragEnd}
+            >
                 <div
                     style={{
                         width: `${scaleMaxSize}px`,
@@ -95,7 +136,6 @@ export default function MaskCircle ({
             </div>
         )
     }
- 
 
     const [isDrag, setIsDrag] = useState(false);
     const [sliderMoveP, setSliderMoveP] = useState([0, 0]);
@@ -173,7 +213,6 @@ export default function MaskCircle ({
                     <span className='Title'>Selection</span>
                 </div>
             </div>
-            
 
             <div id='slider'
                 style={{
@@ -189,5 +228,19 @@ export default function MaskCircle ({
                 onTouchMove={handleOnTouchMove}
                 onTouchEnd={handleOnTouchEnd}
             />
+
+            {
+                isMaskDrag && <div 
+                    style={{
+                        width: `${svgMaxSize}px`,
+                        height: `${svgMaxSize}px`,
+                        background: `url(${selectedMask}) no-repeat`,
+                        backgroundSize: 'contain',
+                        position: 'absolute',
+                        left: `${maskMoveP[0] - (canvasWidth - 0.35 * circleRadius) - svgMaxSize / 2}px`,
+                        top: `${maskMoveP[1] - (offsetHeight + 0.45 * circleRadius) - svgMaxSize / 2}px`,
+                    }}
+                />
+            }
     </div>
 }

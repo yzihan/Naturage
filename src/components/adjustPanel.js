@@ -51,7 +51,8 @@ export default function AdjustPanel ({
         }
         if(isScale) {
             scaleRatio2[0] = (currentX - r_ltx) / r_w;
-            scaleRatio2[1] = (r_lty + r_h - currentY) / r_h;
+            // scaleRatio2[1] = (r_lty + r_h - currentY) / r_h;
+            scaleRatio2[1] = scaleRatio2[0]; // set same 
             setScaleRatio2(JSON.parse(JSON.stringify(scaleRatio2)));
         }
     }

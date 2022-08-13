@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentTexture } from "../store/GlobalStore";
 import AdjustPanel from "./adjustPanel";
 import MaskCircle from "./maskCircle";
+import { fabric } from "fabric";
 
 export default function Board ({
     circleRadius,
@@ -89,7 +90,12 @@ export default function Board ({
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
 
+
             if(selectedD === 0) {
+                canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
+                if(savedCanvas !== null) {
+                    canvasCont.putImageData(savedCanvas, 0, 0);
+                }
                 canvasCont.beginPath();
                 canvasCont.strokeStyle = pencilStyle.color;
                 canvasCont.lineWidth = pencilStyle.size;
@@ -100,6 +106,10 @@ export default function Board ({
                     e.changedTouches[0].clientY - canvasOffset[1],
                 );
             } else if (selectedD === 1) {
+                canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
+                if(savedCanvas !== null) {
+                    canvasCont.putImageData(savedCanvas, 0, 0);
+                }
                 setEraserPoint([
                     e.changedTouches[0].clientX - canvasOffset[0],
                     e.changedTouches[0].clientY - canvasOffset[1],
@@ -234,7 +244,7 @@ export default function Board ({
             const canvasCont = canvas.getContext('2d');
 
             if(selectedD === 0) {
-                canvasCont.closePath();
+                // canvasCont.closePath();
                 setSavedCanvas(canvasCont.getImageData(0, 0, canvasSize[0], canvasSize[1]));
             } else if (selectedD === 1) {
                 canvasCont.save();
@@ -263,6 +273,7 @@ export default function Board ({
                 });
 
                 rangeRects.push([leftTop[0], leftTop[1], rightBottom[0] - leftTop[0], rightBottom[1] - leftTop[1]]);
+
                 shapeHasDrawed[shapeHasDrawed.length - 1] = true;
                 setShapeHasDrawed(JSON.parse(JSON.stringify(shapeHasDrawed)));
             }
@@ -274,15 +285,22 @@ export default function Board ({
                     const lby = rectPoints[1] + rectPoints[3];
                     const points = shapePoints[selectedShape];
                     for(let n = 0; n < points.length; n++) {
-                        const vx = points[n][0] - lbx;
-                        const vy = points[n][1] - lby;
-                        points[n][0] = lbx + vx * scaleRatio[0];
-                        points[n][1] = lby + vy * scaleRatio[1];
+                        for(let m = 0; m < points[n].length; m++) {
+                            if(m % 2 === 0) {
+                                const vx = points[n][m] - lbx;
+                                points[n][m] = lbx + vx * scaleRatio[0];
+                            } else {
+                                const vy = points[n][m] - lby;
+                                points[n][m] = lby + vy * scaleRatio[1];
+                            }
+                        }
                     }
 
                     rangeRects[selectedShape][1] = rectPoints[1] + rectPoints[3] * (1 - scaleRatio[1]);
                     rangeRects[selectedShape][2] = rectPoints[2] * scaleRatio[0];
                     rangeRects[selectedShape][3] = rectPoints[3] * scaleRatio[1];
+
+                    shapeTextureInfo[selectedShape].rect = [];
 
                     setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
                     setIsScale(false);
@@ -299,15 +317,20 @@ export default function Board ({
         
                         const points = shapePoints[selectedShape];
                         for(let i = 0; i < points.length; i++) {
-                            points[i][0] += deltaX;
-                            points[i][1] += deltaY;
+                            for(let m = 0; m < points[i].length; m++) {
+                                if(m % 2 === 0) {
+                                    points[i][m] += deltaX;
+                                } else {
+                                    points[i][m] += deltaY;
+                                }
+                            }
                         }
                         shapePoints[selectedShape] = points;
                         setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
                     } 
                     setMoveDistance([0, 0, 0, 0]);
                     setIsTranslate(false);
-                } 
+                }
                 
                 if(isRotate) {
                     if(rotatePoints[0] === rotatePoints[2] && rotatePoints[1] === rotatePoints[3]) {
@@ -339,6 +362,7 @@ export default function Board ({
                             setIsAdjustTexture(false);
                         }
                     } else {
+                        setIsAdjustTexture(false);
                         const rectPoints = rangeRects[selectedShape];
 
                         // rotate shape points
@@ -352,12 +376,21 @@ export default function Board ({
                         if(vec1[0] * vec2[1] - vec1[1] * vec2[0] < 0) rAngle = -rAngle;
                         const points = shapePoints[selectedShape];
                         for(let n = 0; n < points.length; n++) {
-                            const lenX = points[n][0] - centerX;
-                            const lenY = points[n][1] - centerY;
-                            const len = Math.sqrt(lenX * lenX + lenY * lenY);
-                            const pAngle = Math.atan2(lenY, lenX) + rAngle;
-                            points[n][0] = centerX + len * Math.cos(pAngle);
-                            points[n][1] = centerY + len * Math.sin(pAngle);
+                            for(let m = 0; m < points[n].length; ) {
+                                const lenX = points[n][m] - centerX;
+                                const lenY = points[n][m + 1] - centerY;
+                                const len = Math.sqrt(lenX * lenX + lenY * lenY);
+                                const pAngle = Math.atan2(lenY, lenX) + rAngle;
+                                points[n][m] = centerX + len * Math.cos(pAngle);
+                                points[n][m + 1] = centerY + len * Math.sin(pAngle);
+                                m += 2;
+                            }
+                            // const lenX = points[n][0] - centerX;
+                            // const lenY = points[n][1] - centerY;
+                            // const len = Math.sqrt(lenX * lenX + lenY * lenY);
+                            // const pAngle = Math.atan2(lenY, lenX) + rAngle;
+                            // points[n][0] = centerX + len * Math.cos(pAngle);
+                            // points[n][1] = centerY + len * Math.sin(pAngle);
                         }
                         shapePoints[selectedShape] = points;
                         setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
@@ -375,6 +408,8 @@ export default function Board ({
                         rangeRects[selectedShape][1] = leftTop[1];
                         rangeRects[selectedShape][2] = rightBottom[0] - leftTop[0];
                         rangeRects[selectedShape][3] = rightBottom[1] - leftTop[1];
+
+                        shapeTextureInfo[selectedShape].rect = [];
 
                         setRotatePoints([0, 0, 0, 0]);
                     }
@@ -456,10 +491,15 @@ export default function Board ({
                         const lbx = rectPoints[0];
                         const lby = rectPoints[1] + rectPoints[3];
                         for(let n = 0; n < points.length; n++) {
-                            const vx = points[n][0] - lbx;
-                            const vy = points[n][1] - lby;
-                            points[n][0] = lbx + vx * scaleRatio[0];
-                            points[n][1] = lby + vy * scaleRatio[1];
+                            for(let m = 0; m < points[n].length; m++) {
+                                if(m % 2 === 0) {
+                                    const vx = points[n][m] - lbx;
+                                    points[n][m] = lbx + vx * scaleRatio[0];
+                                } else {
+                                    const vy = points[n][m] - lby;
+                                    points[n][m] = lby + vy * scaleRatio[1];
+                                }
+                            }
                         }
                     }
 
@@ -474,29 +514,55 @@ export default function Board ({
                     if(rAngle > 0) {
                         if(vec1[0] * vec2[1] - vec1[1] * vec2[0] < 0) rAngle = -rAngle;
                         for(let n = 0; n < points.length; n++) {
-                            const lenX = points[n][0] - centerX;
-                            const lenY = points[n][1] - centerY;
-                            const len = Math.sqrt(lenX * lenX + lenY * lenY);
-                            const pAngle = Math.atan2(lenY, lenX) + rAngle;
-                            points[n][0] = centerX + len * Math.cos(pAngle);
-                            points[n][1] = centerY + len * Math.sin(pAngle);
+
+                            for(let m = 0; m < points[n].length; ) {
+                                const lenX = points[n][m] - centerX;
+                                const lenY = points[n][m + 1] - centerY;
+                                const len = Math.sqrt(lenX * lenX + lenY * lenY);
+                                const pAngle = Math.atan2(lenY, lenX) + rAngle;
+                                points[n][m] = centerX + len * Math.cos(pAngle);
+                                points[n][m + 1] = centerY + len * Math.sin(pAngle);
+                                m += 2;
+                            }
+
+
+                            // const lenX = points[n][0] - centerX;
+                            // const lenY = points[n][1] - centerY;
+                            // const len = Math.sqrt(lenX * lenX + lenY * lenY);
+                            // const pAngle = Math.atan2(lenY, lenX) + rAngle;
+                            // points[n][0] = centerX + len * Math.cos(pAngle);
+                            // points[n][1] = centerY + len * Math.sin(pAngle);
                         }
                     }
-
                 } else {
                     points = shapePoints[i];
                 }
+
                 const deltaX = selectedShape === i ? moveDistance[2] - moveDistance[0] : 0;
                 const deltaY = selectedShape === i ? moveDistance[3] - moveDistance[1] : 0;
+
                 for(let k = 0; k < points.length; k++) {
-                    points[k][0] += deltaX;
-                    points[k][1] += deltaY;
+                    for(let m = 0; m < points[k].length; m++) {
+                        if(m % 2 === 0) {
+                            points[k][m] += deltaX;
+                        } else {
+                            points[k][m] += deltaY;
+                        }
+                    }
+                }
+
+                for(let k = 0; k < points.length; k++) {
                     if(k === 0) {
                         canvasCont.moveTo(points[k][0], points[k][1]);
                     } else {
-                        canvasCont.lineTo(points[k][0], points[k][1]);
+                        if(points[k].length === 2) {
+                            canvasCont.lineTo(points[k][0], points[k][1]);
+                        } else {
+                            canvasCont.bezierCurveTo(points[k][0], points[k][1], points[k][2], points[k][3], points[k][4], points[k][5]);
+                        }
                     }
                 }
+
                 if(shapeHasDrawed[i]) canvasCont.closePath();
                 canvasCont.stroke();
 
@@ -548,10 +614,6 @@ export default function Board ({
                             const middleImage = middleCanvas.getContext('2d');
                             middleImage.drawImage(
                                 initCanvas, 
-                                // (initCanvas.width - adaptW) / 2,
-                                // (initCanvas.height - adaptH) / 2,
-                                // adaptW,
-                                // adaptH,
                                 r_ltx, 
                                 r_lty, 
                                 r_w, 
@@ -643,11 +705,16 @@ export default function Board ({
                     indexCanvasCont.fillStyle = `rgba(${shapeIndex[i]}, 0, 0)`;
                     indexCanvasCont.beginPath();
                     const points = shapePoints[i];
+
                     for(let k = 0; k < points.length; k++) {
                         if(k === 0) {
                             indexCanvasCont.moveTo(points[k][0], points[k][1]);
                         } else {
-                            indexCanvasCont.lineTo(points[k][0], points[k][1]);
+                            if(points[k].length === 2) {
+                                indexCanvasCont.lineTo(points[k][0], points[k][1]);
+                            } else {
+                                indexCanvasCont.bezierCurveTo(points[k][0], points[k][1], points[k][2], points[k][3], points[k][4], points[k][5]);
+                            }
                         }
                     }
                     indexCanvasCont.closePath();
@@ -655,9 +722,8 @@ export default function Board ({
                     indexCanvasCont.fill();
                 }
             }
-
         }
-    }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, shapeTextureInfo, imageTexture])
+    }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, imageTexture, isRotate, isTranslate])
 
     const dispatch = useDispatch();
     const adjustPanelWidth = 300;
@@ -669,6 +735,91 @@ export default function Board ({
     const handleTextureAdjust = (newRect) => {
         shapeTextureInfo[selectedShape].rect = newRect;
         setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
+    }
+
+    const handleMaskDrag = (center, svgUrl) => {
+        // console.log('wyh-test-drag', center, svgUrl);
+        fabric.loadSVGFromURL(svgUrl, (objects, _) => {
+            // console.log('wyh-test-path', objects[0].path);
+
+            const pathData = objects[0].path;
+            const svgPoints = [];
+            for(let i = 0; i < pathData.length; i++) {
+                const mode = pathData[i][0];
+                if(mode === 'z') {
+                    break
+                }
+                svgPoints.push(pathData[i].slice(1, pathData[i].length))
+            }
+
+            // console.log('wyh-test-points', svgPoints);
+            // add to shapePoints
+            let newIndex = Math.round(Math.random(0, 1) * 255);
+            while(shapeIndex.indexOf(newIndex) !== -1) {
+                newIndex = Math.round(Math.random(0, 1) * 255);
+            }
+            shapeIndex.push(newIndex);
+
+            shapeTextureInfo.push({
+                type: -1,
+                name: '',
+                rect: []
+            });
+
+            let leftTop = [svgPoints[0][0], svgPoints[0][1]];
+            let rightBottom = [svgPoints[0][0], svgPoints[0][1]];
+            svgPoints.forEach(p => {
+                let px, py;
+                if(p.length === 2) {
+                    px = p[0];
+                    py = p[1];
+                } else {
+                    px = p[4];
+                    py = p[5];
+                }
+                if(px < leftTop[0]) leftTop[0] = px;
+                if(px > rightBottom[0]) rightBottom[0] = px;
+                if(py < leftTop[1]) leftTop[1] = py;
+                if(py > rightBottom[1]) rightBottom[1] = py;
+            })
+
+
+            const width = rightBottom[0] - leftTop[0];
+            const height = rightBottom[1] - leftTop[1];
+
+            // console.log('wyh-test-01', width, height)
+
+            // scale to (128, _)
+            const newWidth = 128;
+            const ratio = newWidth / width;
+            const newHeight = height * ratio;
+
+            const cx = leftTop[0] + 0.5 * width;
+            const cy = leftTop[1] + 0.5 * height;
+
+            const deltaX = center[0] - cx;
+            const deltaY = center[1] - cy;
+            for(let i = 0; i < svgPoints.length; i++) {
+                for(let k = 0; k < svgPoints[i].length; k++) {
+                    if(k % 2 === 0) {
+                        svgPoints[i][k] = (svgPoints[i][k] - cx) * ratio + cx + deltaX;
+                    } else {
+                        svgPoints[i][k] = (svgPoints[i][k] - cy) * ratio + cy + deltaY;
+                    }
+                }
+            }
+
+            rangeRects.push([
+                center[0] - newWidth / 2,
+                center[1] - newHeight / 2,
+                newWidth,
+                newHeight,
+            ])
+
+            shapeHasDrawed.push(true);
+            shapePoints.push(svgPoints);
+            setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
+        })
     }
 
     return (
@@ -823,7 +974,14 @@ export default function Board ({
                         width: `${iconSize}px`,
                         height: `${iconSize}px`,
                     }}
-                    onClick={() => selectedD === 0 ? setSelectedD(-1) : setSelectedD(0)}
+                    onClick={() => {
+                        if(selectedD === 0) {
+                            setSelectedD(-1)
+                        } else {
+                            setSelectedD(0)
+                        }
+                        setSelectedShape(-1);
+                    }}
                     />
                 </div>
                 
@@ -840,7 +998,14 @@ export default function Board ({
                         width: `${iconSize}px`,
                         height: `${iconSize}px`,
                     }}
-                    onClick={() => selectedD === 1 ? setSelectedD(-1) : setSelectedD(1)}
+                    onClick={() => {
+                        if(selectedD === 1) {
+                            setSelectedD(-1)
+                        } else {
+                            setSelectedD(1)
+                        }
+                        setSelectedShape(-1);
+                    }}
                     />
                 </div>
 
@@ -857,7 +1022,14 @@ export default function Board ({
                         width: `${iconSize}px`,
                         height: `${iconSize}px`,
                     }}
-                    onClick={() => selectedD === 2 ? setSelectedD(-1) : setSelectedD(2)}
+                    onClick={() => {
+                        if(selectedD === 2) {
+                            setSelectedD(-1)
+                        } else {
+                            setSelectedD(2)
+                        }
+                        setSelectedShape(-1);
+                    }}
                     />
                 </div>
 
@@ -874,13 +1046,29 @@ export default function Board ({
                         width: `${iconSize}px`,
                         height: `${iconSize}px`,
                     }}
-                    onClick={() => selectedD === 3 ? setSelectedD(-1) : setSelectedD(3)}
+                    // onClick={() => selectedD === 3 ? setSelectedD(-1) : setSelectedD(3)}
+                    onClick={() => {
+                        if(selectedShape !== -1) {
+                            shapeIndex.splice(selectedShape, 1);
+                            shapeTextureInfo.splice(selectedShape, 1);
+                            rangeRects.splice(selectedShape, 1);
+                            shapeHasDrawed.splice(selectedShape, 1);
+                            shapePoints.splice(selectedShape, 1);
+                            setSelectedShape(-1);
+                        }
+                    }}
                     />
                 </div>
             </div>
 
             {/* mask circle */}
-            <MaskCircle circleRadius={circleRadius} canvasWidth={canvasSize[0]} canvasHeight={canvasSize[1]} />
+            <MaskCircle 
+                circleRadius={circleRadius} 
+                canvasWidth={canvasSize[0]} 
+                canvasHeight={canvasSize[1]} 
+                offsetHeight={canvasOffset[1]}
+                dragMaskIntoCanvas={handleMaskDrag}
+            />
         </div>
     )
 }
