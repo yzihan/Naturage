@@ -1,27 +1,28 @@
 # Summary
 
-Date : 2022-08-10 16:27:15
+Date : 2022-08-13 21:41:53
 
 Directory c:\\Users\\A\\Desktop\\CHI\\zihan\\naturesketch\\src
 
-Total : 38 files,  1269 codes, 185 comments, 139 blanks, all 1593 lines
+Total : 46 files,  1986 codes, 141 comments, 224 blanks, all 2351 lines
 
 Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
 ## Languages
 | language | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| JavaScript | 13 | 1,004 | 184 | 111 | 1,299 |
-| CSS | 8 | 180 | 1 | 24 | 205 |
-| XML | 17 | 85 | 0 | 4 | 89 |
+| JavaScript | 16 | 1,700 | 141 | 194 | 2,035 |
+| CSS | 9 | 197 | 0 | 26 | 223 |
+| XML | 21 | 89 | 0 | 4 | 93 |
 
 ## Directories
 | path | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| . | 38 | 1,269 | 185 | 139 | 1,593 |
-| components | 6 | 807 | 106 | 91 | 1,004 |
+| . | 46 | 1,986 | 141 | 224 | 2,351 |
+| components | 10 | 1,520 | 62 | 176 | 1,758 |
 | components-old | 5 | 104 | 31 | 13 | 148 |
 | store | 2 | 48 | 0 | 5 | 53 |
-| svg | 15 | 82 | 0 | 4 | 86 |
+| svg | 19 | 86 | 0 | 4 | 90 |
+| svg\\mask | 4 | 4 | 0 | 0 | 4 |
 
 Summary / [Details](details.md) / [Diff Summary](diff.md) / [Diff Details](diff-details.md)

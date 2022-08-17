@@ -1,28 +1,28 @@
-Date : 2022-08-12 00:36:25
+Date : 2022-08-16 17:17:13
 Directory : c:\Users\A\Desktop\CHI\zihan\naturesketch\src
-Total : 3 files,  110 codes, -66 comments, 8 blanks, all 52 lines
+Total : 2 files,  52 codes, -1 comments, 2 blanks, all 53 lines
 
 Languages
 +------------+------------+------------+------------+------------+------------+
 | language   | files      | code       | comment    | blank      | total      |
 +------------+------------+------------+------------+------------+------------+
-| JavaScript |          3 |        110 |        -66 |          8 |         52 |
+| JavaScript |          2 |         52 |         -1 |          2 |         53 |
 +------------+------------+------------+------------+------------+------------+
 
 Directories
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
 | path                                                                      | files      | code       | comment    | blank      | total      |
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
-| .                                                                         |          3 |        110 |        -66 |          8 |         52 |
-| components                                                                |          3 |        110 |        -66 |          8 |         52 |
+| .                                                                         |          2 |         52 |         -1 |          2 |         53 |
+| components                                                                |          1 |         34 |         -1 |          2 |         35 |
+| store                                                                     |          1 |         18 |          0 |          0 |         18 |
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
 
 Files
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
 | filename                                                                  | language   | code       | comment    | blank      | total      |
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
-| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.js         | JavaScript |        106 |        -80 |          6 |         32 |
-| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.js | JavaScript |          4 |         14 |          1 |         19 |
-| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\utils.js         | JavaScript |          0 |          0 |          1 |          1 |
-| Total                                                                     |            |        110 |        -66 |          8 |         52 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.js | JavaScript |         34 |         -1 |          2 |         35 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\store\GlobalStore.js        | JavaScript |         18 |          0 |          0 |         18 |
+| Total                                                                     |            |         52 |         -1 |          2 |         53 |
 +---------------------------------------------------------------------------+------------+------------+------------+------------+------------+

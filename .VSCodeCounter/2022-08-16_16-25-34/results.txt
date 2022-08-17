@@ -1,0 +1,76 @@
+Date : 2022-08-16 16:25:34
+Directory : c:\Users\A\Desktop\CHI\zihan\naturesketch\src
+Total : 45 files,  2209 codes, 153 comments, 237 blanks, all 2599 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         15 |      1,923 |        153 |        207 |      2,283 |
+| CSS        |          9 |        197 |          0 |         26 |        223 |
+| XML        |         21 |         89 |          0 |          4 |         93 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                       | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                          |         45 |      2,209 |        153 |        237 |      2,599 |
+| components                                                                 |          9 |      1,721 |         74 |        189 |      1,984 |
+| components-old                                                             |          5 |        104 |         31 |         13 |        148 |
+| store                                                                      |          2 |         70 |          0 |          5 |         75 |
+| svg                                                                        |         19 |         86 |          0 |          4 |         90 |
+| svg\mask                                                                   |          4 |          4 |          0 |          0 |          4 |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                   | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\App.css                      | CSS        |         29 |          0 |          5 |         34 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\App.js                       | JavaScript |        126 |         39 |          7 |        172 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\App.test.js                  | JavaScript |          7 |          0 |          2 |          9 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\api.js                       | JavaScript |         24 |          0 |          4 |         28 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\camera.svg                   | XML        |          2 |          0 |          0 |          2 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\draw.css      | CSS        |          0 |          0 |          1 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\draw.js       | JavaScript |          8 |          0 |          2 |         10 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\share.css     | CSS        |          4 |          0 |          0 |          4 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\shot.css      | CSS        |         21 |          0 |          2 |         23 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\shot.js       | JavaScript |         71 |         31 |          8 |        110 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\adjustPanel.js    | JavaScript |        151 |          7 |         22 |        180 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.css         | CSS        |         45 |          0 |          5 |         50 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.js          | JavaScript |      1,007 |         49 |        113 |      1,169 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\collector.js      | JavaScript |          8 |          0 |          1 |          9 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\maskCircle.css    | CSS        |         17 |          0 |          2 |         19 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\maskCircle.js     | JavaScript |        215 |          7 |         24 |        246 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.css | CSS        |         63 |          0 |          9 |         72 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.js  | JavaScript |        209 |         11 |         13 |        233 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\share.css         | CSS        |          6 |          0 |          0 |          6 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\index.css                    | CSS        |         12 |          0 |          2 |         14 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\index.js                     | JavaScript |         14 |          5 |          3 |         22 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\logo.svg                     | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\reportWebVitals.js           | JavaScript |         12 |          0 |          2 |         14 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\setupTests.js                | JavaScript |          1 |          4 |          1 |          6 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\store\GlobalStore.js         | JavaScript |         63 |          0 |          4 |         67 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\store\index.js               | JavaScript |          7 |          0 |          1 |          8 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\add_black.svg            | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\audio_black.svg          | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\board.svg                | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\board_black.svg          | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\collector.svg            | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\collector_black.svg      | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\delete.svg               | XML        |          9 |          0 |          1 |         10 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\eraser.svg               | XML        |         24 |          0 |          1 |         25 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\cloth.svg           | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\cloud.svg           | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\love.svg            | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\qq.svg              | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\material.svg             | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\material_black.svg       | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\pencil.svg               | XML        |         19 |          0 |          1 |         20 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\plant_black.svg          | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\shape.svg                | XML        |         19 |          0 |          1 |         20 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\texture_black.svg        | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\video_black.svg          | XML        |          1 |          0 |          0 |          1 |
+| Total                                                                      |            |      2,209 |        153 |        237 |      2,599 |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+

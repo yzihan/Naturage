@@ -9,11 +9,14 @@
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\share.css", "CSS", 0, 0, 4, 0, 0, 4
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\shot.css", "CSS", 0, 0, 21, 0, 2, 23
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components-old\shot.js", "JavaScript", 71, 0, 0, 31, 8, 110
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\adjustPanel.js", "JavaScript", 151, 0, 0, 7, 22, 180
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.css", "CSS", 0, 0, 45, 0, 5, 50
-"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.js", "JavaScript", 701, 0, 0, 24, 76, 801
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.js", "JavaScript", 921, 0, 0, 47, 106, 1074
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\collector.js", "JavaScript", 8, 0, 0, 0, 1, 9
-"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.css", "CSS", 0, 0, 63, 1, 9, 73
-"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.js", "JavaScript", 94, 0, 0, 15, 7, 116
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\maskCircle.css", "CSS", 0, 0, 17, 0, 2, 19
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\maskCircle.js", "JavaScript", 215, 0, 0, 7, 24, 246
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.css", "CSS", 0, 0, 63, 0, 9, 72
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\materialPanel.js", "JavaScript", 94, 0, 0, 1, 6, 101
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\share.css", "CSS", 0, 0, 6, 0, 0, 6
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\utils.js", "JavaScript", 0, 0, 0, 0, 1, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\index.css", "CSS", 0, 0, 12, 0, 2, 14
@@ -31,6 +34,10 @@
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\collector_black.svg", "XML", 0, 1, 0, 0, 0, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\delete.svg", "XML", 0, 9, 0, 0, 1, 10
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\eraser.svg", "XML", 0, 24, 0, 0, 1, 25
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\cloth.svg", "XML", 0, 1, 0, 0, 0, 1
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\cloud.svg", "XML", 0, 1, 0, 0, 0, 1
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\love.svg", "XML", 0, 1, 0, 0, 0, 1
+"c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\mask\qq.svg", "XML", 0, 1, 0, 0, 0, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\material.svg", "XML", 0, 1, 0, 0, 0, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\material_black.svg", "XML", 0, 1, 0, 0, 0, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\pencil.svg", "XML", 0, 19, 0, 0, 1, 20
@@ -38,4 +45,4 @@
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\shape.svg", "XML", 0, 19, 0, 0, 1, 20
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\texture_black.svg", "XML", 0, 1, 0, 0, 0, 1
 "c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\video_black.svg", "XML", 0, 1, 0, 0, 0, 1
-"Total", "-", 1114, 85, 180, 119, 147, 1645
+"Total", "-", 1700, 89, 197, 141, 224, 2351

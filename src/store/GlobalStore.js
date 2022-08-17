@@ -17,6 +17,46 @@ const initialGlobalSate = {
             imageURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/image/flower-02.jpg',
         },
     ],
+    audios: [
+        {
+            name: 'Water-01',
+            idImage: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/water-svg.svg',
+            audioURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/water-01.mp3',
+        },
+        {
+            name: 'Wind-01',
+            idImage: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/wind-svg.svg',
+            audioURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/wind-01.mp3',
+        },
+        {
+            name: 'Rain-01',
+            idImage: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/rain-svg.svg',
+            audioURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/rain-01.mp3',
+        },
+        {
+            name: 'Cicada-01',
+            idImage: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/insect-svg.svg',
+            audioURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/cicada-01.mp3',
+        },
+    ],
+    videos: [
+        {
+            name: 'Flower-01',
+            videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Flower-01.mp4',
+        },
+        {
+            name: 'Grass-01',
+            videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Grass-01.mp4',
+        },
+        {
+            name: 'Rain-01',
+            videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Rain-01.mp4',
+        },
+        {
+            name: 'Sky-01',
+            videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Sky-01.mp4',
+        },
+    ],
     currentTexture: {
         type: -1,
         name: '',

@@ -82,10 +82,27 @@ export default function Board ({
     const currentTexture = useSelector(currentInfo);
     const [shapeTextureInfo, setShapeTextureInfo] = useState([]);
 
-    // console.log('wyh-test-01', shapeTextureInfo);
+    const timeIndexRef = useRef({
+        timeIndex: []
+    });
+
+    const timeRef = useRef({
+        timers: []
+    });
+
+    // ref is used to get current info
+    const [imageTexture, setImageTexture] = useState([]);
+    const texturesRef = useRef({
+        textureArr: []
+    })
+
+    const [videoTexture, setVideoTexture] = useState([]);
+    const videosRef = useRef({
+        videoArr: []
+    })
 
     const handleOnTouchStart = (e) => {
-        if(selectedD !== -1 && selectedD !== -3) {
+        if(selectedD !== -1 && selectedD !== 3) {
             setIsDraw(true);
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
@@ -133,7 +150,10 @@ export default function Board ({
                     name: '',
                     rect: []
                 });
+
+                timeIndexRef.current.timeIndex.push(-1);
             }
+
         } else if (selectedD === -1) {
             const indexCanvas = document.getElementById('index-canvas');
             const indexCanvasCont = indexCanvas.getContext('2d');
@@ -334,7 +354,7 @@ export default function Board ({
                 
                 if(isRotate) {
                     if(rotatePoints[0] === rotatePoints[2] && rotatePoints[1] === rotatePoints[3]) {
-                        // right left button for adjusting texture
+                        // right bottom button for adjusting texture
                         const currentX = e.changedTouches[0].clientX - canvasOffset[0];
                         const currentY = e.changedTouches[0].clientY - canvasOffset[1];
                         const t_disX = currentX - (rectPoints[0] + rectPoints[2]);
@@ -359,6 +379,7 @@ export default function Board ({
                                 name: '',
                                 url: '',
                             }));
+                            setRotatePoints([0, 0, 0, 0]);
                             setIsAdjustTexture(false);
                         }
                     } else {
@@ -385,12 +406,6 @@ export default function Board ({
                                 points[n][m + 1] = centerY + len * Math.sin(pAngle);
                                 m += 2;
                             }
-                            // const lenX = points[n][0] - centerX;
-                            // const lenY = points[n][1] - centerY;
-                            // const len = Math.sqrt(lenX * lenX + lenY * lenY);
-                            // const pAngle = Math.atan2(lenY, lenX) + rAngle;
-                            // points[n][0] = centerX + len * Math.cos(pAngle);
-                            // points[n][1] = centerY + len * Math.sin(pAngle);
                         }
                         shapePoints[selectedShape] = points;
                         setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
@@ -419,18 +434,34 @@ export default function Board ({
         }
     }
 
-    // ref is used to get current info
-    const [imageTexture, setImageTexture] = useState([]);
-    const texturesRef = useRef({
-        textureArr: []
-    })
+    // 有点问题
+    useEffect(() => {
+        const videos = videosRef.current.videoArr;
+        if(isDraw || isTranslate || isRotate || isScale) {
+            for(let i = 0; i < videos.length; i++) {
+                if(videos[i].paused === false) videos[i].pause();
+            }
+            for(let i = 0; i < timeIndexRef.current.timeIndex.length; i++) {
+                const index = timeIndexRef.current.timeIndex[i];
+                if(index !== -1) {
+                    const timer = timeRef.current.timers[index];
+                    // console.log('wyh-test-enter-01', isDraw, isTranslate, isRotate, isScale)
+                    // console.log('wyh-test-enter-01', timeIndexRef.current.timeIndex, timeRef.current.timers)
+                    clearInterval(timeRef.current.timers[index]);
+                    timeIndexRef.current.timeIndex[i] = -1;
+                    // console.log('wyh-test-enter-0101', timeIndexRef.current.timeIndex, timeRef.current.timers)
+                }
+            }
+            if(timeRef.current.timers.length > 0) timeRef.current.timers = []
+        } 
+    }, [isDraw, isTranslate, isRotate, isScale, timeRef, timeIndexRef])
 
     const initialCanvasWidth = 900;
     useEffect(() => {
         if(selectedShape !== -1) {
             if(currentTexture.type === 0) {
                 const index = imageTexture.findIndex(imgT => imgT.name === currentTexture.name);
-                // console.log('wyh-test', index, imageTexture);
+
                 if(index === -1) {
                     const img = new Image();
                     img.crossOrigin = '';
@@ -451,9 +482,54 @@ export default function Board ({
                     }
                 }
 
-                if(currentTexture.name !==  shapeTextureInfo[selectedShape].name) {
+                if(currentTexture.name !==  shapeTextureInfo[selectedShape].name || shapeTextureInfo[selectedShape].type !== 0) {
                     shapeTextureInfo[selectedShape] = {
                         type: 0,
+                        name: currentTexture.name,
+                        rect: []
+                    }
+                    setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
+                }
+
+            } else if(currentTexture.type === 2) {
+                const index = videoTexture.findIndex(vT => vT.name === currentTexture.name);
+                if(index === -1) {
+                    const videoDiv = document.createElement('video');
+                    videoDiv.src = currentTexture.url;
+                    videoDiv.type = 'video/mp4';
+                    videoDiv.preload = 'auto';
+                    videoDiv.autoplay = 'autoplay';
+                    videoDiv.loop = 'loop';
+                    videoDiv.crossOrigin = '';
+
+                    // console.log('wyh-test-enter-videoTexture-ori', selectedShape, currentTexture, shapeTextureInfo)
+
+                    videoDiv.oncanplay = () => {  // 好坑， loop会反复触发oncanplay
+
+                        if(videoTexture.findIndex(vT => vT.name === currentTexture.name) === -1) {
+
+                            videosRef.current.videoArr.push(videoDiv); // 目前会push两次
+
+                            // console.log('wyh-test-enter-videoTexture', videoTexture)
+                            
+                            videoTexture.push({
+                                name: currentTexture.name,
+                            });
+                            setVideoTexture(JSON.parse(JSON.stringify(videoTexture)));
+                        }
+                    }
+                }
+
+                if(currentTexture.name !==  shapeTextureInfo[selectedShape].name || shapeTextureInfo[selectedShape].type !== 2) {
+                    const timeIndex = timeIndexRef.current.timeIndex[selectedShape];
+                    if(timeIndex !== -1) {
+                        // console.log('wyh-test-enter-02', timeIndexRef.current.timeIndex)
+                        clearInterval(timeRef.current.timers[timeIndex]);
+                        timeRef.current.timers.splice(timeIndex, 1);
+                        timeIndexRef.current.timeIndex[selectedShape] = -1;
+                    }
+                    shapeTextureInfo[selectedShape] = {
+                        type: 2,
                         name: currentTexture.name,
                         rect: []
                     }
@@ -463,7 +539,10 @@ export default function Board ({
         }
     }, [selectedShape, currentTexture, shapeTextureInfo])
 
-    // console.log('wyh-test-imageTexture', imageTexture, texturesRef.current, shapeTextureInfo)
+    // console.log('wyh-test-Texture', videoTexture, videosRef.current.videoArr)
+    // console.log('wyh-test-Texture', imageTexture, texturesRef.current.textureArr)
+    // console.log('wyh-test-timer', timeIndexRef.current.timeIndex, timeRef.current.timers)
+    console.log('wyh-test-01', currentTexture)
 
     // draw
     useEffect(() => {
@@ -570,6 +649,7 @@ export default function Board ({
                 if(shapeHasDrawed[i] && !isRotate && !isScale && !isTranslate) {
                     const textureInfo = shapeTextureInfo[i];
                     if(textureInfo.type === 0) {
+
                         const index = imageTexture.findIndex(imgT => imgT.name === textureInfo.name);
 
                         if(index !== -1) {
@@ -631,6 +711,118 @@ export default function Board ({
                             canvasCont.translate(rectPoints[0], rectPoints[1]);
                             canvasCont.fill();
                             canvasCont.restore();
+                        }
+                    } else if(textureInfo.type === 2 && timeIndexRef.current.timeIndex[i] === -1) {
+                        // console.log('wyh-test-enter-0201', timeIndexRef.current.timeIndex, timeRef.current.timers, i)
+                        const index = videoTexture.findIndex(vT => vT.name === textureInfo.name);
+                        // console.log('wyh-test-enter-02-index', videoTexture, textureInfo.name, index)
+                        if(index !== -1) {
+                            const video = videosRef.current.videoArr[index];
+                            // console.log('wyh-test-enter-02-video', video)
+                            if(video.paused) {
+                                // console.log('wyh-test-enter-02')
+                                video.play();
+                            }
+
+                            // same to image
+                            const rangeW = rectPoints[2];
+                            const rangeH = rectPoints[3];
+                            const videoWidth = video.videoWidth;
+                            const videoHeight = video.videoHeight;
+
+                            let r_ltx, r_lty, r_w, r_h;
+                            if(shapeTextureInfo[i].rect.length === 0) {
+                                // scale rangeW and rangH  => no 加了有个空白的bug
+                                const newRangW = rangeW;
+                                const newRangH = rangeH;
+
+                                const wRatio = videoWidth / newRangW;
+                                const hRatio = videoHeight / newRangH;
+                                let adaptW, adaptH;
+                
+                                if(wRatio > 1 && hRatio > 1) {
+                                    adaptW = newRangW;
+                                    adaptH = newRangH;
+                                } else {     
+                                    if(wRatio > hRatio) {
+                                        adaptW = videoHeight * (newRangW / newRangH);
+                                        adaptH = videoHeight;
+                                    } else {
+                                        adaptW = videoWidth;
+                                        adaptH = videoWidth * (newRangH / newRangW);
+                                    }
+                                }
+
+                                r_ltx = (videoWidth - newRangW) / 2;
+                                r_lty = (videoHeight - newRangH) / 2;
+                                r_w = newRangW;
+                                r_h = newRangH;
+                                shapeTextureInfo[i].rect = [r_ltx, r_lty, r_w, r_h];
+                                // console.log('wyh-test-range-02', rangeW, rangeH, r_w, r_h, r_ltx, r_lty)
+                            } else {
+                                r_ltx = shapeTextureInfo[i].rect[0];
+                                r_lty = shapeTextureInfo[i].rect[1];
+                                r_w = shapeTextureInfo[i].rect[2];
+                                r_h = shapeTextureInfo[i].rect[3];
+                            }
+
+                            const initCanvas = document.createElement('canvas');
+                            initCanvas.width = videoWidth;
+                            initCanvas.height = videoHeight;
+                            const initImage = initCanvas.getContext('2d');
+
+                            // console.log('wyh-test-timeRef', timeRef.current, timeIndexRef.current.timeIndex)
+                            
+                            timeIndexRef.current.timeIndex[i] = timeRef.current.timers.length;
+
+                            timeRef.current.timers.push(setInterval(() => {
+
+                                console.log('wyh-test-01-enter')
+                                
+                                initImage.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, videoWidth, videoHeight);
+
+                                const middleCanvas = document.createElement('canvas');
+                                // const middleCanvas = document.getElementById('test-canvas');
+                                middleCanvas.width =  rangeW;
+                                middleCanvas.height = rangeH;
+                                const middleImage = middleCanvas.getContext('2d');
+                                middleImage.drawImage(
+                                    initCanvas, 
+                                    r_ltx, 
+                                    r_lty, 
+                                    r_w, 
+                                    r_h,
+                                    0,
+                                    0, 
+                                    rangeW, 
+                                    rangeH
+                                );
+                                
+                                const pattern = canvasCont.createPattern(middleCanvas, 'no-repeat');
+
+                                // redraw the shape
+                                canvasCont.strokeStyle = 'rgba(0, 0, 0, 0)'
+                                canvasCont.beginPath();
+                                for(let k = 0; k < points.length; k++) {
+                                    if(k === 0) {
+                                        canvasCont.moveTo(points[k][0], points[k][1]);
+                                    } else {
+                                        if(points[k].length === 2) {
+                                            canvasCont.lineTo(points[k][0], points[k][1]);
+                                        } else {
+                                            canvasCont.bezierCurveTo(points[k][0], points[k][1], points[k][2], points[k][3], points[k][4], points[k][5]);
+                                        }
+                                    }
+                                }
+                                canvasCont.closePath();
+                                canvasCont.stroke();
+                                
+                                canvasCont.fillStyle = pattern;
+                                canvasCont.save();
+                                canvasCont.translate(rectPoints[0], rectPoints[1]);
+                                canvasCont.fill();
+                                canvasCont.restore();
+                            }, 1000/30))
                         }
                     }
                 }
@@ -723,7 +915,7 @@ export default function Board ({
                 }
             }
         }
-    }, [shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, imageTexture, isRotate, isTranslate])
+    }, [canvasSize, shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, imageTexture, isRotate, isTranslate, videoTexture, timeRef, timeIndexRef])
 
     const dispatch = useDispatch();
     const adjustPanelWidth = 300;
@@ -787,8 +979,6 @@ export default function Board ({
             const width = rightBottom[0] - leftTop[0];
             const height = rightBottom[1] - leftTop[1];
 
-            // console.log('wyh-test-01', width, height)
-
             // scale to (128, _)
             const newWidth = 128;
             const ratio = newWidth / width;
@@ -818,9 +1008,92 @@ export default function Board ({
 
             shapeHasDrawed.push(true);
             shapePoints.push(svgPoints);
+            timeIndexRef.current.timeIndex.push(-1);
             setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
         })
     }
+
+    // audio 
+    const [currentAudios, setCurrentAudios] = useState([]);
+    const handleAudioDrag = (center, svgUrl, audioUrl) => {
+        // console.log('wyh-test-drag', center, svgUrl, audioUrl);
+        currentAudios.push({
+            center: center,
+            idImage: svgUrl,
+            audioUrl: audioUrl,
+        })
+        setCurrentAudios(JSON.parse(JSON.stringify(currentAudios)));
+    }
+
+    const [selectedAudio, setSelectedAudio] = useState(-1);
+    const handleAudioMoveStart = (index, e) => {
+        setSelectedAudio(index);
+    }
+
+    const handleAudioMoveMove = (e) => {
+        if(selectedAudio !== -1) {
+            currentAudios[selectedAudio].center = [
+                e.changedTouches[0].clientX,
+                e.changedTouches[0].clientY - canvasOffset[1]
+            ];
+            setCurrentAudios(JSON.parse(JSON.stringify(currentAudios)));
+        }
+    }
+
+    const handleAudioMoveEnd = (e) => {
+        if(selectedAudio !== -1) {
+            setSelectedAudio(-1);
+        }
+    }
+
+    const audioItems = currentAudios.map((item, i) => {
+        const offsetTop = canvasOffset[1];
+        const offsetY = selectedAudio === i ? 7 : 10;
+        // console.log('wyh-test-offset', offsetTop)
+        return <div key={`audio-${i}`}
+                style={{
+                width: `${offsetTop}px`,
+                height: `${offsetTop}px`,
+                background: "linear-gradient(to right, #3196A8, #b0e0d1)",
+                position: 'absolute',
+                left: `${item.center[0] - offsetTop / 2}px`,
+                top: `${item.center[1] - offsetTop / 2}px`,
+                borderRadius: `${0.2 * offsetTop}px`,
+                border: `${selectedAudio === i ? '3px solid #000' : 'none'}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                caretColor: 'transparent',
+            }}
+            onClick={() => setSelectedAudio(i)}
+            onTouchStart={(e) => handleAudioMoveStart(i, e)}
+            onTouchMove={handleAudioMoveMove}
+            onTouchEnd={handleAudioMoveEnd}
+        >
+            <div
+                style={{
+                    width: `${0.9 * offsetTop}px`,
+                    height: `${0.9 * offsetTop}px`,
+                    backgroundImage: `url(${item.idImage})`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
+                }}
+            />
+
+            <audio src={item.audioUrl} 
+                controls
+                loop
+                style={{
+                    display: "block",
+                    width: `${1.8 * offsetTop}px`,
+                    height: `${0.5 * offsetTop}px`,
+                    position: 'absolute',
+                    top: `${offsetTop + offsetY}px`,
+                }}
+                preload='auto'
+            />
+        </div>
+    })
 
     return (
         <div className="Container" ref={canvasRef}>
@@ -845,6 +1118,8 @@ export default function Board ({
                 onTouchEnd={handleOnTouchEnd}
             />
 
+            {/* <canvas id='test-canvas'/> */}
+
             {
                 isAdjustTexture && <div style={{
                     width: `${adjustPanelWidth}px`,
@@ -866,6 +1141,8 @@ export default function Board ({
                     />
                 </div>
             }
+
+            {audioItems}
 
             {/* material-circle */}
             <div className="Material-circle"
@@ -948,7 +1225,14 @@ export default function Board ({
                 }}
             >
                 {
-                    selecetedM !== -1 && <MaterialPanel materialType={selecetedM} itemBorderRadius={panelBorderRadius * 0.67}/>
+                    selecetedM !== -1 && 
+                    <MaterialPanel 
+                        materialType={selecetedM} 
+                        itemBorderRadius={panelBorderRadius * 0.67} 
+                        offsetLeft={canvasSize[0] * 0.7} 
+                        offsetTop={canvasOffset[1]}
+                        dragAudioIntoCanvas={handleAudioDrag}
+                    />
                 }
             </div>
 
@@ -1046,15 +1330,38 @@ export default function Board ({
                         width: `${iconSize}px`,
                         height: `${iconSize}px`,
                     }}
-                    // onClick={() => selectedD === 3 ? setSelectedD(-1) : setSelectedD(3)}
                     onClick={() => {
                         if(selectedShape !== -1) {
+                            // clear video texture
+                            // console.log('wyh-test-timeRef-delete-01', timeRef.current.timers, timeIndexRef.current.timeIndex)
+                            const index = timeIndexRef.current.timeIndex[selectedShape];
+                            clearInterval(timeRef.current.timers[index]);
+                            timeRef.current.timers.splice(index, 1);
+                            timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                            // console.log('wyh-test-timeRef-delete-02', timeRef.current.timers, timeIndexRef.current.timeIndex)
+
+                            console.log('wyh-test-02-enter')
+
+                            // 有什么用
+                            // if(shapeTextureInfo[selectedShape].type === 2) {
+                            //     const index2 = videoTexture.findIndex(vT => vT.name === shapeTextureInfo[selectedShape].name);
+                            //     if(index2 !== -1) {
+                            //         const video = videosRef.current.videoArr[index2];
+                            //         video.pause();
+                            //     }
+                            // }
+
                             shapeIndex.splice(selectedShape, 1);
                             shapeTextureInfo.splice(selectedShape, 1);
                             rangeRects.splice(selectedShape, 1);
                             shapeHasDrawed.splice(selectedShape, 1);
                             shapePoints.splice(selectedShape, 1);
                             setSelectedShape(-1);
+                        }
+                        if(selectedAudio !== -1) {
+                            currentAudios.splice(selectedAudio, 1);
+                            setCurrentAudios(JSON.parse(JSON.stringify(currentAudios)));
+                            setSelectedAudio(-1);
                         }
                     }}
                     />

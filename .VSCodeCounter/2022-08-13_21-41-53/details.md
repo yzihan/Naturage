@@ -1,10 +1,10 @@
 # Details
 
-Date : 2022-08-12 00:36:25
+Date : 2022-08-13 21:41:53
 
 Directory c:\\Users\\A\\Desktop\\CHI\\zihan\\naturesketch\\src
 
-Total : 39 files,  1379 codes, 119 comments, 147 blanks, all 1645 lines
+Total : 46 files,  1986 codes, 141 comments, 224 blanks, all 2351 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -21,11 +21,14 @@ Total : 39 files,  1379 codes, 119 comments, 147 blanks, all 1645 lines
 | [src/components-old/share.css](/src/components-old/share.css) | CSS | 4 | 0 | 0 | 4 |
 | [src/components-old/shot.css](/src/components-old/shot.css) | CSS | 21 | 0 | 2 | 23 |
 | [src/components-old/shot.js](/src/components-old/shot.js) | JavaScript | 71 | 31 | 8 | 110 |
+| [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 151 | 7 | 22 | 180 |
 | [src/components/board.css](/src/components/board.css) | CSS | 45 | 0 | 5 | 50 |
-| [src/components/board.js](/src/components/board.js) | JavaScript | 701 | 24 | 76 | 801 |
+| [src/components/board.js](/src/components/board.js) | JavaScript | 921 | 47 | 106 | 1,074 |
 | [src/components/collector.js](/src/components/collector.js) | JavaScript | 8 | 0 | 1 | 9 |
-| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 1 | 9 | 73 |
-| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 94 | 15 | 7 | 116 |
+| [src/components/maskCircle.css](/src/components/maskCircle.css) | CSS | 17 | 0 | 2 | 19 |
+| [src/components/maskCircle.js](/src/components/maskCircle.js) | JavaScript | 215 | 7 | 24 | 246 |
+| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 0 | 9 | 72 |
+| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 94 | 1 | 6 | 101 |
 | [src/components/share.css](/src/components/share.css) | CSS | 6 | 0 | 0 | 6 |
 | [src/components/utils.js](/src/components/utils.js) | JavaScript | 0 | 0 | 1 | 1 |
 | [src/index.css](/src/index.css) | CSS | 12 | 0 | 2 | 14 |
@@ -43,6 +46,10 @@ Total : 39 files,  1379 codes, 119 comments, 147 blanks, all 1645 lines
 | [src/svg/collector_black.svg](/src/svg/collector_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/delete.svg](/src/svg/delete.svg) | XML | 9 | 0 | 1 | 10 |
 | [src/svg/eraser.svg](/src/svg/eraser.svg) | XML | 24 | 0 | 1 | 25 |
+| [src/svg/mask/cloth.svg](/src/svg/mask/cloth.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/cloud.svg](/src/svg/mask/cloud.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/love.svg](/src/svg/mask/love.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/qq.svg](/src/svg/mask/qq.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/material.svg](/src/svg/material.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/material_black.svg](/src/svg/material_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/pencil.svg](/src/svg/pencil.svg) | XML | 19 | 0 | 1 | 20 |
