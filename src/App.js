@@ -86,7 +86,7 @@ function App() {
                                 }
                             </div>
                         </Link>
-                        <Link to='/'>
+                        <Link to='/io-test'>
                             <div className='ManuItem'
                             style={{
                                 width: `${0.9 * menuRefHeight}px`,
@@ -116,7 +116,7 @@ function App() {
                 </div>
                 <div className='Page'>
                     <Routes>
-                        <Route path='/' element={<Board circleRadius={circleRatio * menuRefHeight}/>}/>
+                        <Route path='/io-test' element={<Board circleRadius={circleRatio * menuRefHeight}/>}/>
                         <Route path='/collector' element={<Collector />}/>
                         <Route path='/material' element={<Collector />}/>
                     </Routes>
