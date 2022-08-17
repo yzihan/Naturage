@@ -476,6 +476,14 @@ export default function Board ({
                 }
 
                 if(currentTexture.name !==  shapeTextureInfo[selectedShape].name || shapeTextureInfo[selectedShape].type !== 0) {
+                    if(shapeTextureInfo[selectedShape].type === 2) {
+                        // clear time interval
+                        const index = timeIndexRef.current.timeIndex[selectedShape];
+                        clearInterval(timeRef.current.timers[index]);
+                        timeRef.current.timers.splice(index, 1);
+                        timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                    }
+
                     shapeTextureInfo[selectedShape] = {
                         type: 0,
                         name: currentTexture.name,
