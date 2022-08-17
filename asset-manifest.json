@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/naturesketch-webpage/static/css/main.362fa28f.css",
+    "main.js": "/naturesketch-webpage/static/js/main.ac4c83c5.js",
+    "static/js/787.ba139652.chunk.js": "/naturesketch-webpage/static/js/787.ba139652.chunk.js",
+    "static/media/shape.svg": "/naturesketch-webpage/static/media/shape.71309d0a94fb7bc60229eeef53f87b1d.svg",
+    "static/media/pencil.svg": "/naturesketch-webpage/static/media/pencil.7a5eb8a4c57248a5af4f7e9b9e17d779.svg",
+    "static/media/qq.svg": "/naturesketch-webpage/static/media/qq.147093ca6dc957dbb02c9b35f9a1860d.svg",
+    "static/media/board.svg": "/naturesketch-webpage/static/media/board.76dde4e087e7c4247b52b8e1d6cc1060.svg",
+    "static/media/board_black.svg": "/naturesketch-webpage/static/media/board_black.085156ea76ababab5f852ad96c7ff62f.svg",
+    "static/media/delete.svg": "/naturesketch-webpage/static/media/delete.5206f4620f58f92892e127b927563ac6.svg",
+    "static/media/eraser.svg": "/naturesketch-webpage/static/media/eraser.02321c53a5714e7498bee56a27c3a21a.svg",
+    "static/media/collector.svg": "/naturesketch-webpage/static/media/collector.bf8cb4d1b66a0d8fe9e8d7172e6d5751.svg",
+    "static/media/collector_black.svg": "/naturesketch-webpage/static/media/collector_black.81c127564d3ac10c595671ed48a70cef.svg",
+    "static/media/texture_black.svg": "/naturesketch-webpage/static/media/texture_black.e17d31c061cd69b9e2e53da57d81d4c6.svg",
+    "static/media/love.svg": "/naturesketch-webpage/static/media/love.fe32e036220c7a8226396a71b5fb3466.svg",
+    "static/media/cloth.svg": "/naturesketch-webpage/static/media/cloth.9c2dbcf5ff2faa3a8996e57e56f6bae8.svg",
+    "static/media/material.svg": "/naturesketch-webpage/static/media/material.77c77c43d29fae640dac1333070a6e0b.svg",
+    "static/media/material_black.svg": "/naturesketch-webpage/static/media/material_black.d458afe09add950ef45edc7fe903b6e2.svg",
+    "static/media/cloud.svg": "/naturesketch-webpage/static/media/cloud.61db7df13c27b0e56aada4dedef7655b.svg",
+    "static/media/add_black.svg": "/naturesketch-webpage/static/media/add_black.095e3398f4af601a8125ee139c084956.svg",
+    "index.html": "/naturesketch-webpage/index.html",
+    "static/media/video_black.svg": "/naturesketch-webpage/static/media/video_black.39b044c3067d949ea246347aeac30426.svg",
+    "static/media/audio_black.svg": "/naturesketch-webpage/static/media/audio_black.00dc588a05e47d39a26da241709ab304.svg",
+    "main.362fa28f.css.map": "/naturesketch-webpage/static/css/main.362fa28f.css.map",
+    "main.ac4c83c5.js.map": "/naturesketch-webpage/static/js/main.ac4c83c5.js.map",
+    "787.ba139652.chunk.js.map": "/naturesketch-webpage/static/js/787.ba139652.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.362fa28f.css",
+    "static/js/main.ac4c83c5.js"
+  ]
+}
