@@ -1,10 +1,10 @@
 # Details
 
-Date : 2022-08-13 02:06:10
+Date : 2022-08-17 13:56:26
 
 Directory c:\\Users\\A\\Desktop\\CHI\\zihan\\naturesketch\\src
 
-Total : 46 files,  1785 codes, 124 comments, 201 blanks, all 2110 lines
+Total : 45 files,  2418 codes, 174 comments, 271 blanks, all 2863 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -21,22 +21,21 @@ Total : 46 files,  1785 codes, 124 comments, 201 blanks, all 2110 lines
 | [src/components-old/share.css](/src/components-old/share.css) | CSS | 4 | 0 | 0 | 4 |
 | [src/components-old/shot.css](/src/components-old/shot.css) | CSS | 21 | 0 | 2 | 23 |
 | [src/components-old/shot.js](/src/components-old/shot.js) | JavaScript | 71 | 31 | 8 | 110 |
-| [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 151 | 6 | 22 | 179 |
+| [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 151 | 7 | 22 | 180 |
 | [src/components/board.css](/src/components/board.css) | CSS | 45 | 0 | 5 | 50 |
-| [src/components/board.js](/src/components/board.js) | JavaScript | 772 | 31 | 83 | 886 |
+| [src/components/board.js](/src/components/board.js) | JavaScript | 1,165 | 70 | 146 | 1,381 |
 | [src/components/collector.js](/src/components/collector.js) | JavaScript | 8 | 0 | 1 | 9 |
 | [src/components/maskCircle.css](/src/components/maskCircle.css) | CSS | 17 | 0 | 2 | 19 |
-| [src/components/maskCircle.js](/src/components/maskCircle.js) | JavaScript | 163 | 6 | 24 | 193 |
-| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 1 | 9 | 73 |
-| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 94 | 1 | 6 | 101 |
+| [src/components/maskCircle.js](/src/components/maskCircle.js) | JavaScript | 215 | 7 | 24 | 246 |
+| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 0 | 9 | 72 |
+| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 242 | 11 | 14 | 267 |
 | [src/components/share.css](/src/components/share.css) | CSS | 6 | 0 | 0 | 6 |
-| [src/components/utils.js](/src/components/utils.js) | JavaScript | 0 | 0 | 1 | 1 |
 | [src/index.css](/src/index.css) | CSS | 12 | 0 | 2 | 14 |
 | [src/index.js](/src/index.js) | JavaScript | 14 | 5 | 3 | 22 |
 | [src/logo.svg](/src/logo.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/reportWebVitals.js](/src/reportWebVitals.js) | JavaScript | 12 | 0 | 2 | 14 |
 | [src/setupTests.js](/src/setupTests.js) | JavaScript | 1 | 4 | 1 | 6 |
-| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 41 | 0 | 4 | 45 |
+| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 81 | 0 | 4 | 85 |
 | [src/store/index.js](/src/store/index.js) | JavaScript | 7 | 0 | 1 | 8 |
 | [src/svg/add_black.svg](/src/svg/add_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/audio_black.svg](/src/svg/audio_black.svg) | XML | 1 | 0 | 0 | 1 |

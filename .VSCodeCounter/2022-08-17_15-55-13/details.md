@@ -1,10 +1,10 @@
 # Details
 
-Date : 2022-08-12 18:10:37
+Date : 2022-08-17 15:55:13
 
 Directory c:\\Users\\A\\Desktop\\CHI\\zihan\\naturesketch\\src
 
-Total : 41 files,  1599 codes, 118 comments, 175 blanks, all 1892 lines
+Total : 46 files,  2635 codes, 143 comments, 285 blanks, all 3063 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -21,21 +21,22 @@ Total : 41 files,  1599 codes, 118 comments, 175 blanks, all 1892 lines
 | [src/components-old/share.css](/src/components-old/share.css) | CSS | 4 | 0 | 0 | 4 |
 | [src/components-old/shot.css](/src/components-old/shot.css) | CSS | 21 | 0 | 2 | 23 |
 | [src/components-old/shot.js](/src/components-old/shot.js) | JavaScript | 71 | 31 | 8 | 110 |
-| [src/components/adjustPanel.css](/src/components/adjustPanel.css) | CSS | 0 | 0 | 1 | 1 |
-| [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 152 | 6 | 22 | 180 |
+| [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 151 | 7 | 22 | 180 |
+| [src/components/adjustPanelVideo.js](/src/components/adjustPanelVideo.js) | JavaScript | 193 | 9 | 29 | 231 |
 | [src/components/board.css](/src/components/board.css) | CSS | 45 | 0 | 5 | 50 |
-| [src/components/board.js](/src/components/board.js) | JavaScript | 769 | 31 | 82 | 882 |
+| [src/components/board.js](/src/components/board.js) | JavaScript | 1,189 | 30 | 131 | 1,350 |
 | [src/components/collector.js](/src/components/collector.js) | JavaScript | 8 | 0 | 1 | 9 |
-| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 1 | 9 | 73 |
-| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 94 | 1 | 6 | 101 |
+| [src/components/maskCircle.css](/src/components/maskCircle.css) | CSS | 17 | 0 | 2 | 19 |
+| [src/components/maskCircle.js](/src/components/maskCircle.js) | JavaScript | 215 | 7 | 24 | 246 |
+| [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 0 | 9 | 72 |
+| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 242 | 11 | 14 | 267 |
 | [src/components/share.css](/src/components/share.css) | CSS | 6 | 0 | 0 | 6 |
-| [src/components/utils.js](/src/components/utils.js) | JavaScript | 0 | 0 | 1 | 1 |
 | [src/index.css](/src/index.css) | CSS | 12 | 0 | 2 | 14 |
 | [src/index.js](/src/index.js) | JavaScript | 14 | 5 | 3 | 22 |
 | [src/logo.svg](/src/logo.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/reportWebVitals.js](/src/reportWebVitals.js) | JavaScript | 12 | 0 | 2 | 14 |
 | [src/setupTests.js](/src/setupTests.js) | JavaScript | 1 | 4 | 1 | 6 |
-| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 41 | 0 | 4 | 45 |
+| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 81 | 0 | 4 | 85 |
 | [src/store/index.js](/src/store/index.js) | JavaScript | 7 | 0 | 1 | 8 |
 | [src/svg/add_black.svg](/src/svg/add_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/audio_black.svg](/src/svg/audio_black.svg) | XML | 1 | 0 | 0 | 1 |
@@ -45,6 +46,10 @@ Total : 41 files,  1599 codes, 118 comments, 175 blanks, all 1892 lines
 | [src/svg/collector_black.svg](/src/svg/collector_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/delete.svg](/src/svg/delete.svg) | XML | 9 | 0 | 1 | 10 |
 | [src/svg/eraser.svg](/src/svg/eraser.svg) | XML | 24 | 0 | 1 | 25 |
+| [src/svg/mask/cloth.svg](/src/svg/mask/cloth.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/cloud.svg](/src/svg/mask/cloud.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/love.svg](/src/svg/mask/love.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/mask/qq.svg](/src/svg/mask/qq.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/material.svg](/src/svg/material.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/material_black.svg](/src/svg/material_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/pencil.svg](/src/svg/pencil.svg) | XML | 19 | 0 | 1 | 20 |
