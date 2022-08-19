@@ -274,7 +274,7 @@ export default function Collector ({
                     </div>
                 </div>
             }
-
+ 
             {/* tag selection */}
             {
                 selecetedM === 1 &&

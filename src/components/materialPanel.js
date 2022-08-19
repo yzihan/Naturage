@@ -64,14 +64,18 @@ export default function MaterialPanel ({
     
     const handleSvgDragEnd = (e) => {
         if(isMaskDrag) {
-            dragAudioIntoCanvas(
-                [
-                    e.changedTouches[0].clientX,
-                    e.changedTouches[0].clientY - offsetTop
-                ],
-                selectedMask,
-                selectedAudio
-            )
+            const cx = e.changedTouches[0].clientX;
+            const cy = e.changedTouches[0].clientY;
+            if(cx !== maskMoveP[0] || cy !== maskMoveP[1]) {
+                dragAudioIntoCanvas(
+                    [
+                        e.changedTouches[0].clientX,
+                        e.changedTouches[0].clientY - offsetTop
+                    ],
+                    selectedMask,
+                    selectedAudio
+                )
+            }
             setIsMaskDrag(false);
             setMaskMoveP([0, 0])
             setSelectedMask('');
@@ -116,15 +120,6 @@ export default function MaterialPanel ({
                 return <div className="ItemContainer" key={`item-${index}`}>
                     <div className="ItemSplit"/>
                     <div className="Item" 
-                        // onClick={() => {
-                        //     dispatch(
-                        //         selectCurrentTexture({
-                        //             type: materialType,
-                        //             name: data.name,
-                        //             url: data.audioURL,
-                        //         })
-                        //     )
-                        // }}
                         onTouchStart={(e) => handleSvgDragStart(data.idImage, data.audioURL, e)}
                         onTouchMove={handleSvgDragMove}
                         onTouchEnd={handleSvgDragEnd}
@@ -153,9 +148,7 @@ export default function MaterialPanel ({
                                 <audio src={data.audioURL} 
                                     controls 
                                     style={{
-                                        // display: "block",
-                                        width: '100%',
-                                        height: '25%'
+                                        width: '120%',
                                     }}
                                     preload='auto'
                                 />
