@@ -87,7 +87,7 @@ export default function Collector ({
                     if(mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
                         mediaRecorder.onstop = (e) => {
-                            const blob = new Blob(recorderRef.current.audioData, {type: 'audio/ogg; codecs=opus'});  // 一定要用最新的
+                            const blob = new Blob(recorderRef.current.audioData, {type: 'audio/mp3; codecs=opus'});  // ios不支持 audio/ogg
                             recorderRef.current.audioData = [];
 
                             const audioURL = URL.createObjectURL(blob);
@@ -266,7 +266,7 @@ export default function Collector ({
                         <audio id='audio-play'
                             controls
                             preload='auto'
-                            src={audioUrlData === '' ? 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/cicada-01.mp3' : audioUrlData}
+                            src={audioUrlData}
                             style={{
                                 width: '80%',
                             }}
