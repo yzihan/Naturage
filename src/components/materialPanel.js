@@ -39,7 +39,7 @@ export default function MaterialPanel ({
 
     // reuse drag code in maskdrag
     const [isMaskDrag, setIsMaskDrag] = useState(false);
-    const [maskMoveP, setMaskMoveP] = useState([0, 0]);
+    const [maskMoveP, setMaskMoveP] = useState([0, 0, 0, 0]);
     const [selectedMask, setSelectedMask] = useState('');
     const [selectedAudio, setSelectedAudio] = useState('');
 
@@ -49,24 +49,23 @@ export default function MaterialPanel ({
         setSelectedAudio(audio)
         setMaskMoveP([
             e.changedTouches[0].clientX,
-            e.changedTouches[0].clientY
+            e.changedTouches[0].clientY,
+            e.changedTouches[0].clientX,
+            e.changedTouches[0].clientY,
         ])
     }
 
     const handleSvgDragMove = (e) => {
         if(isMaskDrag) {
-            setMaskMoveP([
-                e.changedTouches[0].clientX,
-                e.changedTouches[0].clientY
-            ])
+            maskMoveP[2] = e.changedTouches[0].clientX;
+            maskMoveP[3] = e.changedTouches[0].clientY;
+            setMaskMoveP(JSON.parse(JSON.stringify(maskMoveP)));
         }
     }
     
     const handleSvgDragEnd = (e) => {
         if(isMaskDrag) {
-            const cx = e.changedTouches[0].clientX;
-            const cy = e.changedTouches[0].clientY;
-            if(cx !== maskMoveP[0] || cy !== maskMoveP[1]) {
+            if(maskMoveP[0] !== maskMoveP[2] || maskMoveP[1] !== maskMoveP[3]) {
                 dragAudioIntoCanvas(
                     [
                         e.changedTouches[0].clientX,
@@ -77,7 +76,7 @@ export default function MaterialPanel ({
                 )
             }
             setIsMaskDrag(false);
-            setMaskMoveP([0, 0])
+            setMaskMoveP([0, 0, 0, 0]);
             setSelectedMask('');
         }
     }
@@ -238,8 +237,8 @@ export default function MaterialPanel ({
                     height: `${offsetTop}px`,
                     background: "linear-gradient(to right, #3196A8, #b0e0d1)",
                     position: 'absolute',
-                    left: `${maskMoveP[0] - offsetLeft - offsetTop / 2}px`,
-                    top: `${maskMoveP[1] - offsetTop - offsetTop / 2}px`,
+                    left: `${maskMoveP[2] - offsetLeft - offsetTop / 2}px`,
+                    top: `${maskMoveP[3] - offsetTop - offsetTop / 2}px`,
                     borderRadius: `${0.2 * offsetTop}px`,
                     display: 'flex',
                     alignItems: 'center',
