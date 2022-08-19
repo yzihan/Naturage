@@ -534,7 +534,19 @@ export default function Board ({
 
     // draw
     useEffect(() => {
+
+        // bug fixed
+        if(shapePoints.length === 0) {
+            const canvas = document.getElementById('painting-canvas');
+            const canvasCont = canvas.getContext('2d');
+            canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
+            if(savedCanvas !== null) {
+                canvasCont.putImageData(savedCanvas, 0, 0);
+            }
+        }
+
         if(shapePoints.length > 0) {
+            // console.log('wyh-test-02-enter-draw');
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
             canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
@@ -1172,7 +1184,18 @@ export default function Board ({
                 </div>
 
                 <div className="Button-material"
-                    onClick={() => selecetedM === 1 ? setSelectedM(-1) : setSelectedM(1)}
+                    onClick={() => {
+                        if(selecetedM === 1) {
+                            setSelectedM(-1);
+                            dispatch(selectCurrentTexture({
+                                type: -1,
+                                name: '',
+                                url: '',
+                            }))
+                        } else {
+                            setSelectedM(1);
+                        }
+                    }}
                     style={{
                         width: `${buttionRadius}px`,
                         height: `${buttionRadius}px`,
@@ -1190,7 +1213,18 @@ export default function Board ({
                 </div>
 
                 <div className="Button-material"
-                    onClick={() => selecetedM === 2 ? setSelectedM(-1) : setSelectedM(2)}
+                    onClick={() => {
+                        if(selecetedM === 2) {
+                            setSelectedM(-1);
+                            dispatch(selectCurrentTexture({
+                                type: -1,
+                                name: '',
+                                url: '',
+                            }))
+                        } else {
+                            setSelectedM(2);
+                        }
+                    }}
                     style={{
                         width: `${buttionRadius}px`,
                         height: `${buttionRadius}px`,
@@ -1327,7 +1361,7 @@ export default function Board ({
                             clearInterval(timeRef.current.timers[index]);
                             timeRef.current.timers.splice(index, 1);
                             timeIndexRef.current.timeIndex.splice(selectedShape, 1);
-
+                            // console.log('wyh-test-01-enter-delete');
                             shapeIndex.splice(selectedShape, 1);
                             shapeTextureInfo.splice(selectedShape, 1);
                             rangeRects.splice(selectedShape, 1);

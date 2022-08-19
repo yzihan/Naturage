@@ -69,12 +69,24 @@ export const selectCurrentTexture = (data) => ({
     payload: data    
 })
 
+export const addAudioData = (data) => ({
+    type: 'ADD_AUDIO_DATA',
+    payload: data 
+})
+
 const globalReducer = (state = initialGlobalSate, action) => {
     switch(action.type) {
         case 'SELECT_CURRENT_TEXTURE':
             return {
                 ...state,
                 currentTexture: action.payload
+            }
+        case 'ADD_AUDIO_DATA':
+            const newAudioData = JSON.parse(JSON.stringify(state.audios));
+            newAudioData.push(action.payload);
+            return {
+                ...state,
+                audios: newAudioData
             }
         default:
             return state;

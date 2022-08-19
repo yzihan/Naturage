@@ -117,8 +117,8 @@ function App() {
                 <div className='Page'>
                     <Routes>
                         <Route path='/io-test' element={<Board circleRadius={circleRatio * menuRefHeight}/>}/>
-                        <Route path='/collector' element={<Collector />}/>
-                        <Route path='/material' element={<Collector />}/>
+                        <Route path='/collector' element={<Collector circleRadius={circleRatio * menuRefHeight} />}/>
+                        <Route path='/material' element={<div />}/>
                     </Routes>
                 </div>
             </div>
