@@ -1,0 +1,38 @@
+Date : 2022-08-19 21:14:29
+Directory : c:\Users\A\Desktop\CHI\zihan\naturesketch\src
+Total : 9 files,  447 codes, 23 comments, 48 blanks, all 518 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |          4 |        423 |         23 |         46 |        492 |
+| CSS        |          1 |         20 |          0 |          2 |         22 |
+| XML        |          4 |          4 |          0 |          0 |          4 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                   | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                      |          9 |        447 |         23 |         48 |        518 |
+| components                                                             |          4 |        432 |         23 |         47 |        502 |
+| store                                                                  |          1 |         11 |          0 |          1 |         12 |
+| svg                                                                    |          4 |          4 |          0 |          0 |          4 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                               | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\board.js      | JavaScript |         36 |          4 |          2 |         42 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\collector.css | CSS        |         20 |          0 |          2 |         22 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\collector.js  | JavaScript |        233 |         12 |         26 |        271 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\components\tagCircle.js  | JavaScript |        143 |          7 |         17 |        167 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\store\GlobalStore.js     | JavaScript |         11 |          0 |          1 |         12 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\cha.svg              | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\gou.svg              | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\recorder.svg         | XML        |          1 |          0 |          0 |          1 |
+| c:\Users\A\Desktop\CHI\zihan\naturesketch\src\svg\stop.svg             | XML        |          1 |          0 |          0 |          1 |
+| Total                                                                  |            |        447 |         23 |         48 |        518 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+

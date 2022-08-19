@@ -1,10 +1,10 @@
 # Details
 
-Date : 2022-08-13 21:41:53
+Date : 2022-08-19 21:14:29
 
 Directory c:\\Users\\A\\Desktop\\CHI\\zihan\\naturesketch\\src
 
-Total : 46 files,  1986 codes, 141 comments, 224 blanks, all 2351 lines
+Total : 52 files,  3082 codes, 166 comments, 333 blanks, all 3581 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
@@ -22,30 +22,34 @@ Total : 46 files,  1986 codes, 141 comments, 224 blanks, all 2351 lines
 | [src/components-old/shot.css](/src/components-old/shot.css) | CSS | 21 | 0 | 2 | 23 |
 | [src/components-old/shot.js](/src/components-old/shot.js) | JavaScript | 71 | 31 | 8 | 110 |
 | [src/components/adjustPanel.js](/src/components/adjustPanel.js) | JavaScript | 151 | 7 | 22 | 180 |
+| [src/components/adjustPanelVideo.js](/src/components/adjustPanelVideo.js) | JavaScript | 193 | 9 | 29 | 231 |
 | [src/components/board.css](/src/components/board.css) | CSS | 45 | 0 | 5 | 50 |
-| [src/components/board.js](/src/components/board.js) | JavaScript | 921 | 47 | 106 | 1,074 |
-| [src/components/collector.js](/src/components/collector.js) | JavaScript | 8 | 0 | 1 | 9 |
+| [src/components/board.js](/src/components/board.js) | JavaScript | 1,225 | 34 | 133 | 1,392 |
+| [src/components/collector.css](/src/components/collector.css) | CSS | 20 | 0 | 2 | 22 |
+| [src/components/collector.js](/src/components/collector.js) | JavaScript | 241 | 12 | 27 | 280 |
 | [src/components/maskCircle.css](/src/components/maskCircle.css) | CSS | 17 | 0 | 2 | 19 |
 | [src/components/maskCircle.js](/src/components/maskCircle.js) | JavaScript | 215 | 7 | 24 | 246 |
 | [src/components/materialPanel.css](/src/components/materialPanel.css) | CSS | 63 | 0 | 9 | 72 |
-| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 94 | 1 | 6 | 101 |
+| [src/components/materialPanel.js](/src/components/materialPanel.js) | JavaScript | 242 | 11 | 14 | 267 |
 | [src/components/share.css](/src/components/share.css) | CSS | 6 | 0 | 0 | 6 |
-| [src/components/utils.js](/src/components/utils.js) | JavaScript | 0 | 0 | 1 | 1 |
+| [src/components/tagCircle.js](/src/components/tagCircle.js) | JavaScript | 143 | 7 | 17 | 167 |
 | [src/index.css](/src/index.css) | CSS | 12 | 0 | 2 | 14 |
 | [src/index.js](/src/index.js) | JavaScript | 14 | 5 | 3 | 22 |
 | [src/logo.svg](/src/logo.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/reportWebVitals.js](/src/reportWebVitals.js) | JavaScript | 12 | 0 | 2 | 14 |
 | [src/setupTests.js](/src/setupTests.js) | JavaScript | 1 | 4 | 1 | 6 |
-| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 41 | 0 | 4 | 45 |
+| [src/store/GlobalStore.js](/src/store/GlobalStore.js) | JavaScript | 92 | 0 | 5 | 97 |
 | [src/store/index.js](/src/store/index.js) | JavaScript | 7 | 0 | 1 | 8 |
 | [src/svg/add_black.svg](/src/svg/add_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/audio_black.svg](/src/svg/audio_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/board.svg](/src/svg/board.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/board_black.svg](/src/svg/board_black.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/cha.svg](/src/svg/cha.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/collector.svg](/src/svg/collector.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/collector_black.svg](/src/svg/collector_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/delete.svg](/src/svg/delete.svg) | XML | 9 | 0 | 1 | 10 |
 | [src/svg/eraser.svg](/src/svg/eraser.svg) | XML | 24 | 0 | 1 | 25 |
+| [src/svg/gou.svg](/src/svg/gou.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/mask/cloth.svg](/src/svg/mask/cloth.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/mask/cloud.svg](/src/svg/mask/cloud.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/mask/love.svg](/src/svg/mask/love.svg) | XML | 1 | 0 | 0 | 1 |
@@ -54,7 +58,9 @@ Total : 46 files,  1986 codes, 141 comments, 224 blanks, all 2351 lines
 | [src/svg/material_black.svg](/src/svg/material_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/pencil.svg](/src/svg/pencil.svg) | XML | 19 | 0 | 1 | 20 |
 | [src/svg/plant_black.svg](/src/svg/plant_black.svg) | XML | 1 | 0 | 0 | 1 |
+| [src/svg/recorder.svg](/src/svg/recorder.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/shape.svg](/src/svg/shape.svg) | XML | 19 | 0 | 1 | 20 |
+| [src/svg/stop.svg](/src/svg/stop.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/texture_black.svg](/src/svg/texture_black.svg) | XML | 1 | 0 | 0 | 1 |
 | [src/svg/video_black.svg](/src/svg/video_black.svg) | XML | 1 | 0 | 0 | 1 |
 

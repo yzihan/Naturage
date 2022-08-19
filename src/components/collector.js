@@ -91,6 +91,7 @@ export default function Collector ({
                             recorderRef.current.audioData = [];
 
                             const audioURL = URL.createObjectURL(blob);
+                            console.log('wyh-test-audioURL', audioURL);
                             setAudioUrlData(audioURL);
                             setIsPlay(false);
                         }
@@ -121,6 +122,16 @@ export default function Collector ({
                 }
             } else if (selecetedM === 2) {
                 // video
+            }
+        }
+    }
+
+    // test
+    if(selecetedM === 1) {
+        const audio = document.getElementById('audio-play');
+        if(audio !== null) {
+            audio.onerror = (e) => {
+                console.log('wyh-test-error', audio.error.code, audio.error.message)
             }
         }
     }
@@ -255,7 +266,7 @@ export default function Collector ({
                         <audio id='audio-play'
                             controls
                             preload='auto'
-                            src={audioUrlData}
+                            src={audioUrlData === '' ? 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/audio/cicada-01.mp3' : audioUrlData}
                             style={{
                                 width: '80%',
                             }}

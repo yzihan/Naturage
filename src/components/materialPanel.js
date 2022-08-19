@@ -153,7 +153,7 @@ export default function MaterialPanel ({
                                 <audio src={data.audioURL} 
                                     controls 
                                     style={{
-                                        display: "block",
+                                        // display: "block",
                                         width: '100%',
                                         height: '25%'
                                     }}
