@@ -11,7 +11,7 @@ import stopSvg from "../svg/stop.svg";
 import { useEffect, useRef, useState } from "react";
 import TagCircle from "./tagCircle";
 import { useDispatch } from "react-redux";
-import { addAudioData } from "../store/GlobalStore";
+import { addAudioData, addVideoData } from "../store/GlobalStore";
 
 export default function Collector ({
     circleRadius,
@@ -32,10 +32,22 @@ export default function Collector ({
 
     const [isPlay, setIsPlay] = useState(false);
 
+    const recorderRef = useRef({
+        mediaRecorder: null,
+        audioData: [],
+        videoStream: null,
+        videoData: [],
+    });
+
     const [audioUrlData, setAudioUrlData] = useState('');
     const [newAudioTag, setNewAudioTag] = useState('');
     const [hasSetTag, setHasSetTag] = useState(false);
     const [selectedTag, setSelectedTag] = useState(-1);
+
+    const [videoUrlData, setVideoUrlData] = useState('');
+
+    const videoRBGW = 0.85 * circleRadius;
+    const videoRBGH = videoRBGW * 1024 / 1366;
 
     useEffect(() => {
         if(selecetedM === 1) {
@@ -61,18 +73,23 @@ export default function Collector ({
                 // image
             } else if (selecetedM === 1) {
                 // audio
+                setIsPlay(false);
                 setSelectedM(-1);
+                setAudioUrlData('');
+                setNewAudioTag('');
+                setHasSetTag('false');
+                setSelectedTag(-1);
+                recorderRef.current.mediaRecorder = null;
 
             } else if (selecetedM === 2) {
                 // video
+                setIsPlay(false);
+                setSelectedM(-1);
+                setVideoUrlData('');
+                recorderRef.current.mediaRecorder = null;
             }
         }
     }
-    
-    const recorderRef = useRef({
-        mediaRecorder: null,
-        audioData: []
-    });
 
     const handlePlayClick = () => {
         if(selecetedM === -1) {
@@ -122,6 +139,44 @@ export default function Collector ({
                 }
             } else if (selecetedM === 2) {
                 // video
+
+                if(isPlay) {
+                    const mediaRecorder = recorderRef.current.mediaRecorder;
+                    if(mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                        mediaRecorder.onstop = (e) => {
+                            const blob = new Blob(recorderRef.current.videoData);
+                            recorderRef.current.videoData = [];
+
+                            const videoURL = URL.createObjectURL(blob);
+                            console.log('wyh-test-videoURL', videoURL);
+                            const videoDiv = document.getElementById('video-play');
+                            videoDiv.controls = true;
+                            videoDiv.srcObject = null;
+                            videoDiv.src = videoURL;
+
+                            setVideoUrlData(videoURL);
+                            setIsPlay(false);
+                        }
+                    }
+                } else {
+                    setIsPlay(true);
+                    if(recorderRef.current.mediaRecorder === null) {
+                        const mediaRecorder = new MediaRecorder(recorderRef.current.videoStream, {mimeType: 'video/webm; codecs=vp9'});  // 'video/mp4; codecs=h264' 报错
+                        mediaRecorder.start();
+                        mediaRecorder.ondataavailable = (e) => {
+                            recorderRef.current.videoData.push(e.data);
+                        }
+                        
+                        recorderRef.current.mediaRecorder = mediaRecorder;
+                    } else{
+                        const mediaRecorder = recorderRef.current.mediaRecorder;
+                        mediaRecorder.start();
+                        mediaRecorder.ondataavailable = (e) => {
+                            recorderRef.current.videoData.push(e.data);
+                        }
+                    }
+                }
             }
         }
     }
@@ -141,6 +196,25 @@ export default function Collector ({
     const handleGouClick = () => {
         if(selecetedM === -1) {
             setSelectedM(2);
+
+            // initialize
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: videoRBGW * 0.9,
+                    height: videoRBGH * 0.9
+                },
+                audio: true,
+            }).then(stream => {
+                recorderRef.current.videoStream = stream;
+                const videoDiv = document.getElementById('video-play');
+                videoDiv.controls = false;
+                videoDiv.srcObject = stream;
+                videoDiv.play();
+            }).catch(error => {
+                console.log('wyh-test-video-recorder-error', error);
+            })
+            
         } else {
             if(selecetedM === 0) {
                 // image
@@ -160,7 +234,18 @@ export default function Collector ({
 
             } else if (selecetedM === 2) {
                 // video
+                const newName = new Date().getTime();
+                const videoDiv = document.getElementById('video-play');
+                dispatch(addVideoData({
+                    name: newName.toString(),
+                    videoURL: videoDiv.src,
+                }))
 
+                videoDiv.controls = false;
+                videoDiv.srcObject = recorderRef.current.videoStream;
+                videoDiv.src = null;
+                videoDiv.play();
+                setVideoUrlData('');
             }
         }
     }
@@ -176,7 +261,8 @@ export default function Collector ({
         style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            caretColor: 'transparent'
         }}>
 
             {/* material-circle */}
@@ -228,7 +314,7 @@ export default function Collector ({
                         height: `${buttionRadius}px`,
                         top: `${0.65 * circleRadius}px`,
                         left: `${circleRadius - 0.88 * buttionRadius}px`,
-                        background: `${selecetedM === 1 ? (hasSetTag ? '#D5E9E9' : '#bbb') : '#D5E9E9'}`
+                        background: `${selecetedM === 1 ? (hasSetTag ? '#D5E9E9' : '#bbb') : (selecetedM === 2 ? (videoUrlData === '' ? '#bbb' : '#D5E9E9') : '#D5E9E9')}`
                     }}>
                         <div style={{
                             backgroundImage: `url(${selecetedM === -1 ? videoBlackSvg : gouSvg})`,
@@ -285,6 +371,27 @@ export default function Collector ({
                     selectNewTag={handleTagSelect}
                     selectedTag={selectedTag}
                 />
+            }
+
+            {
+                // video
+                selecetedM === 2 && 
+                <div style={{
+                    width: `${videoRBGW}px`,
+                    height: `${videoRBGH}px`,
+                    backgroundImage: 'url(https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/videoRecorder.png)',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: `${videoRBGW * 0.18}px`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <video id='video-play' 
+                    style={{
+                        borderRadius: `${videoRBGH * 0.1}px`
+                    }}/>
+                </div>
             }
         </div>
     )

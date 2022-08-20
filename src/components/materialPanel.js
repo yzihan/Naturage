@@ -178,7 +178,7 @@ export default function MaterialPanel ({
 
                         <video className="ItemImage"
                             src={data.videoURL}
-                            type='video/mp4'
+                            // type='video/mp4'
                             preload='auto'
                             controls
                             style={{
