@@ -11,7 +11,8 @@ import stopSvg from "../svg/stop.svg";
 import { useEffect, useRef, useState } from "react";
 import TagCircle from "./tagCircle";
 import { useDispatch } from "react-redux";
-import { addAudioData, addVideoData } from "../store/GlobalStore";
+import { addAudioData, addImageData, addVideoData } from "../store/GlobalStore";
+import { fetchImageSegmentationResult } from "../api";
 
 export default function Collector ({
     circleRadius,
@@ -49,6 +50,34 @@ export default function Collector ({
     const videoRBGW = 0.85 * circleRadius;
     const videoRBGH = videoRBGW * 1024 / 1366;
 
+    const inputRef = useRef(null);
+    const [imgSrc, setImgSrc] = useState("");
+    const [anchors, setAnchors] = useState([]);
+    const handleCameraImage = (e) => {
+        const file = (e.target.files)[0];
+        
+        // fetch anchors - 30秒左右等待
+        const imageData = new FormData();
+        imageData.append("img", file);
+        fetchImageSegmentationResult(imageData).then((res) => {
+            console.log('wyh-test-02', res);
+            setAnchors(res.anchors);
+            // setImgSrc(res.image);  // return base64 image
+        })
+
+        // display images
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImgSrc(reader.result);
+            // send to backend
+        }
+        if(file) {
+            reader.readAsDataURL(file);
+        } else {
+            setImgSrc("");
+        }
+    }
+
     useEffect(() => {
         if(selecetedM === 1) {
             if(audioUrlData !== '') {
@@ -63,14 +92,15 @@ export default function Collector ({
         }
     }, [newAudioTag, audioUrlData, selecetedM])
 
-    // audio data
-
     const handleChaClick = () => {
         if(selecetedM === -1) {
             setSelectedM(0);
         } else {
             if(selecetedM === 0) {
                 // image
+                setSelectedM(-1);
+                setImgSrc('');
+                setAnchors([]);
             } else if (selecetedM === 1) {
                 // audio
                 setIsPlay(false);
@@ -97,6 +127,8 @@ export default function Collector ({
         } else {
             if(selecetedM === 0) {
                 // image
+                if(inputRef.current !== null) inputRef.current.click();
+
             } else if (selecetedM === 1) {
                 // audio
                 if(isPlay) {
@@ -145,7 +177,7 @@ export default function Collector ({
                     if(mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
                         mediaRecorder.onstop = (e) => {
-                            const blob = new Blob(recorderRef.current.videoData);
+                            const blob = new Blob(recorderRef.current.videoData, {type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'});
                             recorderRef.current.videoData = [];
 
                             const videoURL = URL.createObjectURL(blob);
@@ -162,7 +194,7 @@ export default function Collector ({
                 } else {
                     setIsPlay(true);
                     if(recorderRef.current.mediaRecorder === null) {
-                        const mediaRecorder = new MediaRecorder(recorderRef.current.videoStream, {mimeType: 'video/webm; codecs=vp9'});  // 'video/mp4; codecs=h264' 报错
+                        const mediaRecorder = new MediaRecorder(recorderRef.current.videoStream, {mimeType: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'});  // windows和ios支持的mimeType不同
                         mediaRecorder.start();
                         mediaRecorder.ondataavailable = (e) => {
                             recorderRef.current.videoData.push(e.data);
@@ -218,6 +250,15 @@ export default function Collector ({
         } else {
             if(selecetedM === 0) {
                 // image
+                if(imgSrc !== '') {
+                    const newName = new Date().getTime();
+                    dispatch(addImageData({
+                        name: newName.toString(),
+                        imageURL: imgSrc,
+                    }))
+                    setImgSrc('');
+                    setAnchors([]);
+                }
             } else if (selecetedM === 1) {
                 // audio
                 if(hasSetTag) {
@@ -234,18 +275,20 @@ export default function Collector ({
 
             } else if (selecetedM === 2) {
                 // video
-                const newName = new Date().getTime();
-                const videoDiv = document.getElementById('video-play');
-                dispatch(addVideoData({
-                    name: newName.toString(),
-                    videoURL: videoDiv.src,
-                }))
+                if(videoUrlData !== '') {
+                    const newName = new Date().getTime();
+                    const videoDiv = document.getElementById('video-play');
+                    dispatch(addVideoData({
+                        name: newName.toString(),
+                        videoURL: videoDiv.src,
+                    }))
 
-                videoDiv.controls = false;
-                videoDiv.srcObject = recorderRef.current.videoStream;
-                videoDiv.src = null;
-                videoDiv.play();
-                setVideoUrlData('');
+                    videoDiv.controls = false;
+                    videoDiv.srcObject = recorderRef.current.videoStream;
+                    videoDiv.src = null;
+                    videoDiv.play();
+                    setVideoUrlData('');
+                }
             }
         }
     }
@@ -254,6 +297,25 @@ export default function Collector ({
         setSelectedTag(i);
         setNewAudioTag(tagUrl);
     }
+
+    // https://naturesketch.oss-cn-hangzhou.aliyuncs.com/image/flash.png
+    const flashSize = 100;
+    const flashItems = anchors.map((anchor, idx) => {
+        const left = anchor[0] * (videoRBGW * 0.9) - flashSize / 2;
+        const top = anchor[1] * (videoRBGH * 0.9) - flashSize / 2;
+        return <div key={`flash-${idx}`}
+            style={{
+                backgroundImage: 'url(https://naturesketch.oss-cn-hangzhou.aliyuncs.com/image/flash.png)',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'contain',
+                width: `${flashSize}px`,
+                height: `${flashSize}px`,
+                position: 'absolute',
+                left: `${left}px`,
+                top: `${top}px`,
+            }}
+        />
+    })
 
     return (
         <div className="Container" 
@@ -314,7 +376,7 @@ export default function Collector ({
                         height: `${buttionRadius}px`,
                         top: `${0.65 * circleRadius}px`,
                         left: `${circleRadius - 0.88 * buttionRadius}px`,
-                        background: `${selecetedM === 1 ? (hasSetTag ? '#D5E9E9' : '#bbb') : (selecetedM === 2 ? (videoUrlData === '' ? '#bbb' : '#D5E9E9') : '#D5E9E9')}`
+                        background: `${selecetedM === 1 ? (hasSetTag ? '#D5E9E9' : '#bbb') : (selecetedM === 2 ? (videoUrlData === '' ? '#bbb' : '#D5E9E9') : (selecetedM === 0 ? (imgSrc === '' ? '#bbb' : '#D5E9E9') : '#D5E9E9'))}`
                     }}>
                         <div style={{
                             backgroundImage: `url(${selecetedM === -1 ? videoBlackSvg : gouSvg})`,
@@ -391,6 +453,44 @@ export default function Collector ({
                     style={{
                         borderRadius: `${videoRBGH * 0.1}px`
                     }}/>
+                </div>
+            }
+
+            {
+                // image
+                selecetedM === 0 &&
+                <div style={{
+                    width: `${videoRBGW}px`,
+                    height: `${videoRBGH}px`,
+                    backgroundImage: 'url(https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/videoRecorder.png)',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: `${videoRBGW * 0.18}px`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div 
+                        style={{
+                            width: `${videoRBGW * 0.9}px`,
+                            height: `${videoRBGH * 0.9}px`,
+                            borderRadius: `${videoRBGH * 0.1}px`,
+                            backgroundImage: `url(${imgSrc})`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: '100% 100%',
+                            position: 'relative',
+                        }}
+                    >
+                        {flashItems}
+                    </div>
+                    <input 
+                        type='file' 
+                        accept='image/*' 
+                        capture='camera' 
+                        onChange={handleCameraImage} 
+                        ref={inputRef} 
+                        style={{display: 'none'}}
+                    />
                 </div>
             }
         </div>

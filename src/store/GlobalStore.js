@@ -79,6 +79,11 @@ export const addVideoData = (data) => ({
     payload: data 
 })
 
+export const addImageData = (data) => ({
+    type: 'ADD_IMAGE_DATA',
+    payload: data 
+})
+
 const globalReducer = (state = initialGlobalSate, action) => {
     switch(action.type) {
         case 'SELECT_CURRENT_TEXTURE':
@@ -99,6 +104,13 @@ const globalReducer = (state = initialGlobalSate, action) => {
             return {
                 ...state,
                 videos: newVideoData
+            }
+        case 'ADD_IMAGE_DATA':
+            const newImageData = JSON.parse(JSON.stringify(state.images));
+            newImageData.push(action.payload);
+            return {
+                ...state,
+                images: newImageData
             }
         default:
             return state;
