@@ -52,7 +52,7 @@ export default function Board ({
 
     // eraser
     const [eraserStyle, setEraserStyle] = useState({
-        size: 30,
+        size: 50,
     });
     const [eraserPoint, setEraserPoint] = useState([]);
 

@@ -140,6 +140,11 @@ def image_segmentation():
     image = cv2.imdecode(np.asarray(bytearray(files['img'].read()), dtype='uint8'), cv2.IMREAD_COLOR)
     image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
+    print('image-size', image.size)
+    scale = 0.2
+    image = image.resize((int(scale * image.size[0]), int(scale * image.size[1])), Image.ANTIALIAS)
+    # 图片太大了 =》缩小4倍
+
     feature_extractor = SegformerFeatureExtractor.from_pretrained('./image-segmentation')
     model = SegformerForSemanticSegmentation.from_pretrained('./image-segmentation')
 

@@ -21,9 +21,19 @@ function App() {
     const circleRatio = 18;
 
     const [selectedItem, setSelectedItem] = useState(2);
+
+    useEffect(() => {
+        const app = document.getElementById('app');
+        app.addEventListener("touchmove", e => {
+            e.preventDefault();
+        }, {
+            passive: false
+        })
+    }, [])
+
     return (
         <BrowserRouter>
-            <div className='App'>
+            <div className='App' id='app'>
                 <div className='Menu' ref={menuRef}>
                     <div style={{
                         width: `${3.5 * menuRefHeight}px`,
