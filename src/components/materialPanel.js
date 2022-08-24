@@ -45,6 +45,7 @@ export default function MaterialPanel ({
 
     const handleSvgDragStart = (svg, audio, e) => {
         setIsMaskDrag(true);
+        console.log('wyh-test-enter-handleSvgDragStart')
         setSelectedMask(svg);
         setSelectedAudio(audio)
         setMaskMoveP([
@@ -56,11 +57,14 @@ export default function MaterialPanel ({
     }
 
     const handleSvgDragMove = (e) => {
+        console.log('wyh-test-enter-handleSvgDragMove-01');
         if(isMaskDrag) {
+            console.log('wyh-test-enter-handleSvgDragMove-02');
             maskMoveP[2] = e.changedTouches[0].clientX;
             maskMoveP[3] = e.changedTouches[0].clientY;
             setMaskMoveP(JSON.parse(JSON.stringify(maskMoveP)));
         }
+        // e.nativeEvent.stopImmediatePropagation();
     }
     
     const handleSvgDragEnd = (e) => {
@@ -119,9 +123,19 @@ export default function MaterialPanel ({
                 return <div className="ItemContainer" key={`item-${index}`}>
                     <div className="ItemSplit"/>
                     <div className="Item" 
-                        onTouchStart={(e) => handleSvgDragStart(data.idImage, data.audioURL, e)}
-                        onTouchMove={handleSvgDragMove}
-                        onTouchEnd={handleSvgDragEnd}
+                        // onTouchStart={(e) => handleSvgDragStart(data.idImage, data.audioURL, e)}
+                        // onTouchMove={handleSvgDragMove}
+                        // onTouchEnd={handleSvgDragEnd}
+                        onClick={() => {
+                            dragAudioIntoCanvas(
+                                [
+                                    500,
+                                    400
+                                ],
+                                data.idImage,
+                                data.audioURL
+                            )
+                        }}
                     >
                         <div className="ItemImage" 
                             style={{
@@ -209,8 +223,18 @@ export default function MaterialPanel ({
         setBottonRefHeight(buttonRef.current?.clientHeight || 0);
     }, [buttonRef])
 
+
+    useEffect(() => {
+        const app = document.getElementById('material-panel');
+        app.addEventListener("touchmove", (e) => {
+            e.stopPropagation();
+        }, {
+            useCapture: false,
+        })
+    }, [])
+
     return (
-        <div className="PanelContainer" style={{position: 'relative'}}>
+        <div className="PanelContainer" style={{position: 'relative'}} id='material-panel'>
             <div className="ListContainer">
                 {listItems}
             </div>

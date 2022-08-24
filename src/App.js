@@ -25,11 +25,39 @@ function App() {
     useEffect(() => {
         const app = document.getElementById('app');
         app.addEventListener("touchmove", e => {
-            e.preventDefault();
+            // console.log('wyh-test-01-father')
+            e.preventDefault(); // 这玩意会被继承
+            // return false
         }, {
+            useCapture: false,
             passive: false
         })
     }, [])
+
+    const texturesRef = useRef({
+        textureArr: []
+    })
+    
+    const handleTextureArrChange = (n) => {
+        texturesRef.current.textureArr.push(n);
+    }
+
+    const videosRef = useRef({
+        videoArr: []
+    })
+
+    const handleVideoArrChange = (n) => {
+        videosRef.current.videoArr.push(n);
+    }
+
+    const canvasRef = useRef({
+        drawedCanvas: null
+    })
+    // const [savedCanvas, setSavedCanvas] = useState(null);
+
+    const handleCanvasDraw = (n) => {
+        canvasRef.current.drawedCanvas = n;
+    }
 
     return (
         <BrowserRouter>
@@ -124,9 +152,19 @@ function App() {
                         </Link>
                     </div>
                 </div>
-                <div className='Page'>
+                <div className='Page' id='page'>
                     <Routes>
-                        <Route path='/io-test' element={<Board circleRadius={circleRatio * menuRefHeight}/>}/>
+                        <Route path='/io-test' element={
+                            <Board 
+                                circleRadius={circleRatio * menuRefHeight} 
+                                textureArr={texturesRef.current.textureArr}
+                                changeTextureArr={handleTextureArrChange}
+                                videoArr={videosRef.current.videoArr}
+                                changeVideoArr={handleVideoArrChange}
+                                drawedCanvas={canvasRef.current.drawedCanvas}
+                                changeDrawedCanvas={handleCanvasDraw}
+                            />
+                        }/>
                         <Route path='/collector' element={<Collector circleRadius={circleRatio * menuRefHeight} />}/>
                         <Route path='/material' element={<div />}/>
                     </Routes>

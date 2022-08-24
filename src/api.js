@@ -2,7 +2,7 @@
 // const port = "8080";
 // const baseUrl = "http://" + ipAddress + ":" + port + "/";
 
-const baseUrl = 'https://4d9c9383.r2.cpolar.top/'
+const baseUrl = 'https://7a0c6b0b.r3.cpolar.top/'
 
 export const baseGetRequest = async (url) => {
     const res = await fetch(baseUrl + url, {

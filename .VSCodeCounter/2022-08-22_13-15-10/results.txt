@@ -1,0 +1,38 @@
+Date : 2022-08-22 13:15:10
+Directory : c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend
+Total : 9 files,  1226 codes, 159 comments, 25 blanks, all 1410 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| XML      |          6 |        752 |          0 |          0 |        752 |
+| JSON     |          2 |        390 |          0 |          2 |        392 |
+| Python   |          1 |         84 |        159 |         23 |        266 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                              |          9 |      1,226 |        159 |         25 |      1,410 |
+| .idea                                                                                                          |          6 |        752 |          0 |          0 |        752 |
+| .idea\inspectionProfiles                                                                                       |          2 |        721 |          0 |          0 |        721 |
+| image-segmentation                                                                                             |          2 |        390 |          0 |          2 |        392 |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                       | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\backend.iml                              | XML      |         10 |          0 |          0 |         10 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\inspectionProfiles\Project_Default.xml   | XML      |        715 |          0 |          0 |        715 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\inspectionProfiles\profiles_settings.xml | XML      |          6 |          0 |          0 |          6 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\misc.xml                                 | XML      |          7 |          0 |          0 |          7 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\modules.xml                              | XML      |          8 |          0 |          0 |          8 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\.idea\vcs.xml                                  | XML      |          6 |          0 |          0 |          6 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\flask_backend.py                               | Python   |         84 |        159 |         23 |        266 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\image-segmentation\config.json                 | JSON     |        372 |          0 |          1 |        373 |
+| c:\Users\Administrator\Desktop\zihan\final\naturesketch\backend\image-segmentation\preprocessor_config.json    | JSON     |         18 |          0 |          1 |         19 |
+| Total                                                                                                          |          |      1,226 |        159 |         25 |      1,410 |
++----------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

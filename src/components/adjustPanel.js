@@ -34,7 +34,7 @@ export default function AdjustPanel ({
                 const distX = currentX - (r_ltx + r_w);
                 const distY = currentY - r_lty ; 
                 const dist = Math.sqrt(distX * distX + distY * distY);
-                if(dist < 20) {
+                if(dist < 40) {
                     setIsScale(true);
                 }
             }

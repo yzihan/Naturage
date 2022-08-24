@@ -11,7 +11,7 @@ import pencilSvg from "../svg/pencil.svg";
 import eraserSvg from "../svg/eraser.svg";
 import { createSelector } from "reselect";
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentTexture } from "../store/GlobalStore";
+import { changeIsSaved, saveCanvasData, selectCurrentTexture } from "../store/GlobalStore";
 import AdjustPanel from "./adjustPanel";
 import MaskCircle from "./maskCircle";
 import { fabric } from "fabric";
@@ -19,7 +19,14 @@ import AdjustPanelVideo from "./adjustPanelVideo";
 
 export default function Board ({
     circleRadius,
+    textureArr,
+    changeTextureArr,
+    videoArr,
+    changeVideoArr,
+    drawedCanvas,
+    changeDrawedCanvas,
 }) {
+    const dispatch = useDispatch();
     const buttionRadius = 0.115 * circleRadius;
     const iconSize = 0.28 * buttionRadius;
     const panelBorderRadius = 1.5 * iconSize;
@@ -41,6 +48,43 @@ export default function Board ({
         ]);
     }, [canvasRef])
 
+    const globalInfo = createSelector(
+        state => state.global,
+        global => ({
+            lastshapePoints: global.shapePoints,
+            lastshapeHasDrawed: global.shapeHasDrawed,
+            lastshapeIndex: global.shapeIndex,
+            lastrangeRects: global.rangeRects,
+            lastsavedCanvas: global.savedCanvas,
+            lastshapeTextureInfo: global.shapeTextureInfo,
+            // lasttimeIndexRef: global.timeIndexRef,
+            // lasttimeRef: global.timeRef,
+            lastimageTexture: global.imageTexture,
+            // lasttexturesRef: global.texturesRef,
+            lastvideoTexture: global.videoTexture,
+            // lastvideosRef: global.videosRef,
+            lastTimeIndex: global.timeIndex,
+            lastAudios: global.audiosArr,
+        })
+    );
+
+    const {
+        lastshapePoints,
+        lastshapeHasDrawed,
+        lastshapeIndex,
+        lastrangeRects,
+        lastsavedCanvas,
+        lastshapeTextureInfo,
+        // lasttimeIndexRef,
+        // lasttimeRef,
+        lastimageTexture,
+        // lasttexturesRef,
+        lastvideoTexture,
+        // lastvideosRef,
+        lastTimeIndex,
+        lastAudios
+    } = useSelector(globalInfo);
+
     // canvas
     const [isDraw, setIsDraw] = useState(false);
 
@@ -57,21 +101,23 @@ export default function Board ({
     const [eraserPoint, setEraserPoint] = useState([]);
 
     // closed shape
-    const [shapePoints, setShapePoints] = useState([]); // [[points of a shape], []]
-    const [shapeHasDrawed, setShapeHasDrawed] = useState([]); // boolean
-    const [shapeIndex, setShapeIndex] = useState([]); // r(rgb) - number[]
+    const [shapePoints, setShapePoints] = useState(() => lastshapePoints); // [[points of a shape], []]
+    const [shapeHasDrawed, setShapeHasDrawed] = useState(() => lastshapeHasDrawed); // boolean
+    const [shapeIndex, setShapeIndex] = useState(() => lastshapeIndex); // r(rgb) - number[]
     const [moveDistance, setMoveDistance] = useState([0, 0, 0, 0]); // move vector
-    const [rangeRects, setRangeRects] = useState([]); // [[], []]
+    const [rangeRects, setRangeRects] = useState(() => lastrangeRects); // [[], []]
     const [isTranslate, setIsTranslate] = useState(false);
     const [isRotate, setIsRotate] = useState(false);
     const [isScale, setIsScale] = useState(false);
     const [scaleRatio, setScaleRatio] = useState([1, 1]);
     const [rotatePoints, setRotatePoints] = useState([0, 0, 0, 0]);
     const [selectedShape, setSelectedShape] = useState(-1);
-    const [savedCanvas, setSavedCanvas] = useState(null);
+    const [savedCanvas, setSavedCanvas] = useState(() => lastsavedCanvas);
 
     const [isAdjustTexture, setIsAdjustTexture] = useState(false);
     const [adjustPoint, setAdjustPoint] = useState([0, 0]);
+
+    const [currentAudios, setCurrentAudios] = useState(() => lastAudios);
 
     // current-texture
     const currentInfo = createSelector(
@@ -79,33 +125,95 @@ export default function Board ({
         global => global.currentTexture,
     )
     const currentTexture = useSelector(currentInfo);
-    const [shapeTextureInfo, setShapeTextureInfo] = useState([]);
+    const [shapeTextureInfo, setShapeTextureInfo] = useState(() => lastshapeTextureInfo);
 
-    const timeIndexRef = useRef({
-        timeIndex: []
-    });
+    // const timeIndexRef = useRef({
+    //     timeIndex: [] // 要设为 -1
+    // });
+
+    const [timeIndex, setTimeIndex] = useState(() => lastTimeIndex);  // 惰性初始化，不再在re-render过程中重新初始化
 
     const timeRef = useRef({
         timers: []
     });
 
     // ref is used to get current info
-    const [imageTexture, setImageTexture] = useState([]);
-    const texturesRef = useRef({
-        textureArr: []
-    })
+    const [imageTexture, setImageTexture] = useState(() => lastimageTexture);
+    // const texturesRef = useRef({
+    //     textureArr: []
+    // })
 
-    const [videoTexture, setVideoTexture] = useState([]);
-    const videosRef = useRef({
-        videoArr: []
-    })
+    const [videoTexture, setVideoTexture] = useState(() => lastvideoTexture);
+    // const videosRef = useRef({
+    //     videoArr: []
+    // })
+
+    // 最好在销毁时更新，但是似乎在销毁时不能获得最新state
+    useEffect(() => {
+        const newTimeIndex = timeIndex.map(() => -1);
+        dispatch(saveCanvasData({
+            shapePoints: shapePoints,
+            shapeHasDrawed: shapeHasDrawed,
+            shapeIndex: shapeIndex,
+            rangeRects: rangeRects,
+            savedCanvas: savedCanvas,
+            shapeTextureInfo: shapeTextureInfo,
+            imageTexture: imageTexture,
+            videoTexture: videoTexture,
+            timeIndex: newTimeIndex,
+            audiosArr: currentAudios,
+        }))
+    }, [dispatch, shapePoints, shapeHasDrawed, shapeIndex, rangeRects, savedCanvas, shapeTextureInfo, imageTexture, videoTexture, timeIndex, currentAudios])
+
+    useEffect(() => {
+        return () => {
+            for(let i = 0; i < timeRef.current.timers.length; i++) {
+                clearInterval(timeRef.current.timers[i]);
+            }
+            timeRef.current = null;
+        }
+    }, [])
+
+    console.log('wyh-test-01', savedCanvas)
+
+    // useEffect(() => {
+    //     console.log('wyh-test-02', shapePoints, texturesRef.current, shapeTextureInfo)
+
+    //     const test1 = timeIndexRef.current.timeIndex;
+    //     const test2 = timeRef.current.timers;
+    //     const test3 = texturesRef.current.textureArr;
+    //     const test4 = videosRef.current.videoArr
+
+    //     return () => {
+    //         console.log('wyh-test-03', shapePoints, texturesRef.current, shapeTextureInfo)
+
+    //         dispatch(saveCanvasData({
+    //             shapePoints: shapePoints,
+    //             shapeHasDrawed: shapeHasDrawed,
+    //             shapeIndex: shapeIndex,
+    //             rangeRects: rangeRects,
+    //             savedCanvas: savedCanvas,
+    //             shapeTextureInfo: shapeTextureInfo,
+    //             timeIndexRef: test1,
+    //             timeRef: test2,
+    //             imageTexture: imageTexture,
+    //             texturesRef: test3,
+    //             videoTexture: videoTexture,
+    //             videosRef: test4,
+    //         }))
+
+    //         // timeIndexRef.current = null;
+    //         // timeRef.current = null;
+    //         // texturesRef.current = null;
+    //         // videosRef.current = null;
+    //     }
+    // }, [])  // 闭包中获取不到最新值
 
     const handleOnTouchStart = (e) => {
         if(selectedD !== -1 && selectedD !== 3) {
             setIsDraw(true);
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
-
 
             if(selectedD === 0) {
                 canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
@@ -150,7 +258,8 @@ export default function Board ({
                     rect: []
                 });
 
-                timeIndexRef.current.timeIndex.push(-1);
+                // timeIndexRef.current.timeIndex.push(-1);
+                timeIndex.push(-1);
             }
 
         } else if (selectedD === -1) {
@@ -182,7 +291,7 @@ export default function Board ({
                 const distY = currentY - rectPoints[1]; 
                 const dist = Math.sqrt(distX * distX + distY * distY);
 
-                if(dist < 20) {
+                if(dist < 40) {
                     setIsScale(true);
                     setIsAdjustTexture(false);
                 } else {
@@ -358,7 +467,7 @@ export default function Board ({
                         const t_disy = currentY - (rectPoints[1] + rectPoints[3]);
                         const t_dist = Math.sqrt(t_disX * t_disX + t_disy * t_disy);
 
-                        if(t_dist < 20) {
+                        if(t_dist < 40) {
                             if(!isAdjustTexture) {
                                 adjustPoint[0] = rectPoints[0] + rectPoints[2];
                                 adjustPoint[1] = rectPoints[1] + rectPoints[3] / 2;
@@ -433,21 +542,25 @@ export default function Board ({
 
     // 
     useEffect(() => {
-        const videos = videosRef.current.videoArr;
+        // const videos = videosRef.current.videoArr;
+        const videos = videoArr;
         if(isDraw || isTranslate || isRotate || isScale) {
             for(let i = 0; i < videos.length; i++) {
                 if(videos[i].paused === false) videos[i].pause();
             }
-            for(let i = 0; i < timeIndexRef.current.timeIndex.length; i++) {
-                const index = timeIndexRef.current.timeIndex[i];
+            // for(let i = 0; i < timeIndexRef.current.timeIndex.length; i++) {
+            for(let i = 0; i < timeIndex.length; i++) {    
+                // const index = timeIndexRef.current.timeIndex[i];
+                const index = timeIndex[i];
                 if(index !== -1) {
                     clearInterval(timeRef.current.timers[index]);
-                    timeIndexRef.current.timeIndex[i] = -1;
+                    // timeIndexRef.current.timeIndex[i] = -1;
+                    timeIndex[i] = -1;
                 }
             }
             if(timeRef.current.timers.length > 0) timeRef.current.timers = []
         } 
-    }, [isDraw, isTranslate, isRotate, isScale, timeRef, timeIndexRef])
+    }, [isDraw, isTranslate, isRotate, isScale, timeRef, timeIndex, videoArr])
 
     const initialCanvasWidth = 900;
     useEffect(() => {
@@ -466,7 +579,8 @@ export default function Board ({
                         const initImage = initCanvas.getContext('2d');
                         initImage.drawImage(img, 0, 0, img.width, img.height, 0, 0, initCanvas.width, initCanvas.height);
 
-                        texturesRef.current.textureArr.push(initCanvas);  // 目前会push两次
+                        // texturesRef.current.textureArr.push(initCanvas);  // 目前会push两次
+                        changeTextureArr(initCanvas)
 
                         imageTexture.push({
                             name: currentTexture.name,
@@ -478,10 +592,12 @@ export default function Board ({
                 if(currentTexture.name !==  shapeTextureInfo[selectedShape].name || shapeTextureInfo[selectedShape].type !== 0) {
                     if(shapeTextureInfo[selectedShape].type === 2) {
                         // clear time interval
-                        const index = timeIndexRef.current.timeIndex[selectedShape];
+                        // const index = timeIndexRef.current.timeIndex[selectedShape];
+                        const index = timeIndex[selectedShape];
                         clearInterval(timeRef.current.timers[index]);
                         timeRef.current.timers.splice(index, 1);
-                        timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                        // timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                        timeIndex.splice(selectedShape, 1);
                     }
 
                     shapeTextureInfo[selectedShape] = {
@@ -505,7 +621,9 @@ export default function Board ({
 
                     videoDiv.oncanplay = () => {  // 好坑， loop会反复触发oncanplay
                         if(videoTexture.findIndex(vT => vT.name === currentTexture.name) === -1) {
-                            videosRef.current.videoArr.push(videoDiv); // 目前会push两次
+                            // videosRef.current.videoArr.push(videoDiv); // 目前会push两次
+                            changeVideoArr(videoDiv);
+
                             videoTexture.push({
                                 name: currentTexture.name,
                             });
@@ -515,11 +633,14 @@ export default function Board ({
                 }
 
                 if(currentTexture.name !==  shapeTextureInfo[selectedShape].name || shapeTextureInfo[selectedShape].type !== 2) {
-                    const timeIndex = timeIndexRef.current.timeIndex[selectedShape];
-                    if(timeIndex !== -1) {
-                        clearInterval(timeRef.current.timers[timeIndex]);
-                        timeRef.current.timers.splice(timeIndex, 1);
-                        timeIndexRef.current.timeIndex[selectedShape] = -1;
+                    // const timeIndex = timeIndexRef.current.timeIndex[selectedShape];
+                    console.log('wyh-test', selectedShape, timeIndex)
+                    const index = timeIndex[selectedShape];
+                    if(index !== -1) {
+                        clearInterval(timeRef.current.timers[index]);
+                        timeRef.current.timers.splice(index, 1);
+                        // timeIndexRef.current.timeIndex[selectedShape] = -1;
+                        timeIndex[selectedShape] = -1;
                     }
                     shapeTextureInfo[selectedShape] = {
                         type: 2,
@@ -530,13 +651,14 @@ export default function Board ({
                 }
             }
         }
-    }, [selectedShape, currentTexture, shapeTextureInfo, imageTexture, videoTexture])
+    }, [selectedShape, currentTexture, shapeTextureInfo, imageTexture, videoTexture, changeTextureArr, changeVideoArr, timeIndex])
 
     // draw
     useEffect(() => {
 
         // bug fixed
         if(shapePoints.length === 0) {
+            console.log('wyh-test-01-enter-draw');
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
             canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
@@ -546,11 +668,12 @@ export default function Board ({
         }
 
         if(shapePoints.length > 0) {
-            // console.log('wyh-test-02-enter-draw');
+            console.log('wyh-test-02-enter-draw');
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
             canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
             if(savedCanvas !== null) {
+                console.log('wyh-test-03-enter-draw');
                 canvasCont.putImageData(savedCanvas, 0, 0);
             }
             canvasCont.lineJoin = 'round';
@@ -645,7 +768,8 @@ export default function Board ({
                         const index = imageTexture.findIndex(imgT => imgT.name === textureInfo.name);
 
                         if(index !== -1) {
-                            const initCanvas = texturesRef.current.textureArr[index];
+                            // const initCanvas = texturesRef.current.textureArr[index];
+                            const initCanvas = textureArr[index];
                             const rangeW = rectPoints[2];
                             const rangeH = rectPoints[3];
 
@@ -704,10 +828,12 @@ export default function Board ({
                             canvasCont.fill();
                             canvasCont.restore();
                         }
-                    } else if(textureInfo.type === 2 && timeIndexRef.current.timeIndex[i] === -1) {
+                    // } else if(textureInfo.type === 2 && timeIndexRef.current.timeIndex[i] === -1) {
+                    } else if(textureInfo.type === 2 && timeIndex[i] === -1) {    
                         const index = videoTexture.findIndex(vT => vT.name === textureInfo.name);
                         if(index !== -1) {
-                            const video = videosRef.current.videoArr[index];
+                            // const video = videosRef.current.videoArr[index];
+                            const video = videoArr[index];
                             if(video.paused) {
                                 video.play();
                             }
@@ -758,7 +884,8 @@ export default function Board ({
                             initCanvas.height = videoHeight;
                             const initImage = initCanvas.getContext('2d');
                             
-                            timeIndexRef.current.timeIndex[i] = timeRef.current.timers.length;
+                            // timeIndexRef.current.timeIndex[i] = timeRef.current.timers.length;
+                            timeIndex[i] = timeRef.current.timers.length;
 
                             timeRef.current.timers.push(setInterval(() => {                                
                                 initImage.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, videoWidth, videoHeight);
@@ -897,9 +1024,8 @@ export default function Board ({
                 }
             }
         }
-    }, [canvasSize, shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, imageTexture, isRotate, isTranslate, videoTexture, timeRef, timeIndexRef])
+    }, [canvasSize, shapePoints, shapeHasDrawed, shapeIndex, pencilStyle, savedCanvas, selectedShape, moveDistance, isScale, scaleRatio, rotatePoints, shapeTextureInfo, rangeRects, imageTexture, isRotate, isTranslate, videoTexture, timeRef, timeIndex, videoArr, textureArr])
 
-    const dispatch = useDispatch();
     const adjustPanelWidth = 300;
     const adjustPanelHeight = Math.round(adjustPanelWidth * 1024 / 1366);
     const toTop = adjustPoint[1] - (adjustPanelHeight / 2);
@@ -915,11 +1041,13 @@ export default function Board ({
         shapeTextureInfo[selectedShape].rect = newRect;
         setShapeTextureInfo(JSON.parse(JSON.stringify(shapeTextureInfo)));
         if(shapeTextureInfo[selectedShape].type === 2) {
-            const index = timeIndexRef.current.timeIndex[selectedShape];
+            // const index = timeIndexRef.current.timeIndex[selectedShape];
+            const index = timeIndex[selectedShape];
             if(index !== -1) {
                 clearInterval(timeRef.current.timers[index]);
                 timeRef.current.timers.splice(index, 1);
-                timeIndexRef.current.timeIndex[selectedShape] = -1;
+                // timeIndexRef.current.timeIndex[selectedShape] = -1;
+                timeIndex[selectedShape] = -1;
             }
         }
     }
@@ -999,13 +1127,14 @@ export default function Board ({
 
             shapeHasDrawed.push(true);
             shapePoints.push(svgPoints);
-            timeIndexRef.current.timeIndex.push(-1);
+            // timeIndexRef.current.timeIndex.push(-1);
+            timeIndex.push(-1);
             setShapePoints(JSON.parse(JSON.stringify(shapePoints)));
         })
     }
 
     // audio 
-    const [currentAudios, setCurrentAudios] = useState([]);
+    // const [currentAudios, setCurrentAudios] = useState([]);
     const handleAudioDrag = (center, svgUrl, audioUrl) => {
         currentAudios.push({
             center: center,
@@ -1124,7 +1253,8 @@ export default function Board ({
                         }}>
                             <AdjustPanel 
                                 canvasSize={[adjustPanelWidth, adjustPanelHeight]}
-                                imgCanvas={index !== -1 ? texturesRef.current.textureArr[index] : null}
+                                // imgCanvas={index !== -1 ? texturesRef.current.textureArr[index] : null}
+                                imgCanvas={index !== -1 ? textureArr[index] : null}
                                 rectPosition={shapeTextureInfo[selectedShape].rect}
                                 scaleRatio={adjustPanelWidth / initialCanvasWidth}
                                 imgLT={[adjustPoint[0] + marginLeft, toTop + canvasOffset[1]]}
@@ -1134,7 +1264,8 @@ export default function Board ({
                     ) : (
                         <AdjustPanelVideo 
                             canvasSize={[adjustPanelWidth, adjustPanelHeight]}
-                            videoDiv={index !== -1 ? videosRef.current.videoArr[index]: null}
+                            // videoDiv={index !== -1 ? videosRef.current.videoArr[index]: null}
+                            videoDiv={index !== -1 ? videoArr[index]: null}
                             rectPosition={shapeTextureInfo[selectedShape].rect}
                             imgLT={[adjustPoint[0] + marginLeft, canvasOffset[1]]}
                             forLeft={adjustPoint[0] + marginLeft}
@@ -1357,10 +1488,13 @@ export default function Board ({
                     onClick={() => {
                         if(selectedShape !== -1) {
                             // clear video texture
-                            const index = timeIndexRef.current.timeIndex[selectedShape];
+                            // const index = timeIndexRef.current.timeIndex[selectedShape];
+                            const index = timeIndex[selectedShape];
                             clearInterval(timeRef.current.timers[index]);
                             timeRef.current.timers.splice(index, 1);
-                            timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                            // timeIndexRef.current.timeIndex.splice(selectedShape, 1);
+                            timeIndex.splice(selectedShape, 1);
+
                             // console.log('wyh-test-01-enter-delete');
                             shapeIndex.splice(selectedShape, 1);
                             shapeTextureInfo.splice(selectedShape, 1);

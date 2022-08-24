@@ -44,10 +44,10 @@ const initialGlobalSate = {
             name: 'Flower-01',
             videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Flower-01.mp4',
         },
-        {
-            name: 'Grass-01',
-            videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Grass-01.mp4',
-        },
+        // {
+        //     name: 'Grass-01',
+        //     videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Grass-01.mp4',
+        // },
         {
             name: 'Rain-01',
             videoURL: 'https://naturesketch.oss-cn-hangzhou.aliyuncs.com/video/Rain-01.mp4',
@@ -61,7 +61,22 @@ const initialGlobalSate = {
         type: -1,
         name: '',
         url: '',
-    }
+    },
+    isSaved: false,
+    shapePoints: [],
+    shapeHasDrawed: [],
+    shapeIndex: [],
+    rangeRects: [],
+    savedCanvas: null,
+    shapeTextureInfo: [],
+    timeIndexRef: [],
+    timeRef: [],
+    imageTexture: [],
+    texturesRef: [],
+    videoTexture: [],
+    videosRef: [],
+    timeIndex: [],
+    audiosArr: []
 }
 
 export const selectCurrentTexture = (data) => ({
@@ -82,6 +97,16 @@ export const addVideoData = (data) => ({
 export const addImageData = (data) => ({
     type: 'ADD_IMAGE_DATA',
     payload: data 
+})
+
+export const saveCanvasData = (data) => ({
+    type: 'SAVE_CANVAS_DATA',
+    payload: data,
+})
+
+export const changeIsSaved = (data) => ({
+    type: 'CHANGE_IS_SAVED',
+    payload: data,
 })
 
 const globalReducer = (state = initialGlobalSate, action) => {
@@ -111,6 +136,29 @@ const globalReducer = (state = initialGlobalSate, action) => {
             return {
                 ...state,
                 images: newImageData
+            }
+        case 'SAVE_CANVAS_DATA':
+            return {
+                ...state,
+                shapePoints: action.payload.shapePoints,
+                shapeHasDrawed: action.payload.shapeHasDrawed,
+                shapeIndex: action.payload.shapeIndex,
+                rangeRects: action.payload.rangeRects,
+                savedCanvas: action.payload.savedCanvas,
+                shapeTextureInfo: action.payload.shapeTextureInfo,
+                // timeIndexRef: action.payload.timeIndexRef,
+                // timeRef: action.payload.timeRef,
+                imageTexture: action.payload.imageTexture,
+                // texturesRef: action.payload.texturesRef,
+                videoTexture: action.payload.videoTexture,
+                // videosRef: action.payload.videosRef,
+                timeIndex: action.payload.timeIndex,
+                audiosArr: action.payload.audiosArr,
+            }
+        case 'CHANGE_IS_SAVED':
+            return {
+                ...state,
+                isSaved: action.payload,
             }
         default:
             return state;
