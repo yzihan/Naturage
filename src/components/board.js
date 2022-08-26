@@ -112,7 +112,7 @@ export default function Board ({
     const [scaleRatio, setScaleRatio] = useState([1, 1]);
     const [rotatePoints, setRotatePoints] = useState([0, 0, 0, 0]);
     const [selectedShape, setSelectedShape] = useState(-1);
-    const [savedCanvas, setSavedCanvas] = useState(() => lastsavedCanvas);
+    const [savedCanvas, setSavedCanvas] = useState(lastsavedCanvas);
 
     const [isAdjustTexture, setIsAdjustTexture] = useState(false);
     const [adjustPoint, setAdjustPoint] = useState([0, 0]);
@@ -173,8 +173,6 @@ export default function Board ({
             timeRef.current = null;
         }
     }, [])
-
-    console.log('wyh-test-01', savedCanvas)
 
     // useEffect(() => {
     //     console.log('wyh-test-02', shapePoints, texturesRef.current, shapeTextureInfo)
@@ -598,6 +596,9 @@ export default function Board ({
                         timeRef.current.timers.splice(index, 1);
                         // timeIndexRef.current.timeIndex.splice(selectedShape, 1);
                         timeIndex.splice(selectedShape, 1);
+                        for(let i = selectedShape; i < timeIndex.length; i++) {
+                            timeIndex[i] -= 1;
+                        }
                     }
 
                     shapeTextureInfo[selectedShape] = {
@@ -617,6 +618,7 @@ export default function Board ({
                     videoDiv.preload = 'auto';
                     videoDiv.autoplay = 'autoplay';
                     videoDiv.loop = 'loop';
+                    videoDiv.muted = true;
                     videoDiv.crossOrigin = '';
 
                     videoDiv.oncanplay = () => {  // 好坑， loop会反复触发oncanplay
@@ -658,7 +660,6 @@ export default function Board ({
 
         // bug fixed
         if(shapePoints.length === 0) {
-            console.log('wyh-test-01-enter-draw');
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
             canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
@@ -668,12 +669,10 @@ export default function Board ({
         }
 
         if(shapePoints.length > 0) {
-            console.log('wyh-test-02-enter-draw');
             const canvas = document.getElementById('painting-canvas');
             const canvasCont = canvas.getContext('2d');
             canvasCont.clearRect(0, 0, canvasSize[0], canvasSize[1]);
             if(savedCanvas !== null) {
-                console.log('wyh-test-03-enter-draw');
                 canvasCont.putImageData(savedCanvas, 0, 0);
             }
             canvasCont.lineJoin = 'round';
@@ -910,7 +909,8 @@ export default function Board ({
                                 const pattern = canvasCont.createPattern(middleCanvas, 'no-repeat');
 
                                 // redraw the shape
-                                canvasCont.strokeStyle = 'rgba(0, 0, 0, 0)'
+                                // canvasCont.strokeStyle = selectedShape === i ? 'rgba(25, 144, 161, 1)' : 'rgba(0, 0, 0, 1)'; // have a bug
+                                canvasCont.strokeStyle = 'rgba(0, 0, 0, 1)';
                                 canvasCont.beginPath();
                                 for(let k = 0; k < points.length; k++) {
                                     if(k === 0) {
@@ -1489,11 +1489,17 @@ export default function Board ({
                         if(selectedShape !== -1) {
                             // clear video texture
                             // const index = timeIndexRef.current.timeIndex[selectedShape];
+
+                            console.log('wyh-test-01', timeIndex, timeRef.current.timers)
+
                             const index = timeIndex[selectedShape];
                             clearInterval(timeRef.current.timers[index]);
-                            timeRef.current.timers.splice(index, 1);
+                            timeRef.current.timers.splice(index, 1); // 这里有个bug
                             // timeIndexRef.current.timeIndex.splice(selectedShape, 1);
                             timeIndex.splice(selectedShape, 1);
+                            for(let i = selectedShape; i < timeIndex.length; i++) {
+                                timeIndex[i] -= 1;
+                            }
 
                             // console.log('wyh-test-01-enter-delete');
                             shapeIndex.splice(selectedShape, 1);
@@ -1503,6 +1509,24 @@ export default function Board ({
                             shapePoints.splice(selectedShape, 1);
                             setSelectedShape(-1);
                         }
+
+                        if(selectedD === 1) {
+                            // clear all
+                            alert('clear all?')
+                            for(let i = 0; i < timeIndex.length; i++) {
+                                const index = timeIndex[i];
+                                clearInterval(timeRef.current.timers[index]);
+                            }
+                            timeRef.current.timers = [];
+                            setTimeIndex([]);
+                            setShapePoints([]);
+                            setShapeHasDrawed([]);
+                            setShapeIndex([]);
+                            setRangeRects([]);
+                            setShapeTextureInfo([]);
+                            setCurrentAudios([]);
+                        }
+
                         if(selectedAudio !== -1) {
                             currentAudios.splice(selectedAudio, 1);
                             setCurrentAudios(JSON.parse(JSON.stringify(currentAudios)));
